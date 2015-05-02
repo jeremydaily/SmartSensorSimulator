@@ -242,6 +242,7 @@ SSS::SSS(int potFullScale)
     pinMode(_VccSelectU5_2,OUTPUT); 
     pinMode(_VccSelectU5_3,OUTPUT);
   
+   
 } 
 
 boolean SSS::isIgnitionOn()
@@ -266,20 +267,12 @@ void SSS::sendCANmessages()
 
 
 void SSS::processCAN1message(){
- Serial.print("CAN1 RX, ");
- rxId = CAN1.getCanId();                    // Get message ID
- Serial.print("ID: ");
- Serial.print(rxId, HEX);
- CAN1.readMsgBuf(&len, buf);
- Serial.print(", DLC: ");
- Serial.print(len, HEX);
- Serial.print(", CAN message = ");
- for (int i = 0; i < len; i++)
- {
-   Serial.print(buf[i], HEX);
-   Serial.print(" ");
- }
- Serial.println();
+    CAN1.readMsgBuf(&len, _rxBuf);              // Read data: len = data length, buf = data byte(s)
+    rxId = CAN1.getCanId();                    // Get message ID
+    if ((rxId & 0x00FF0000) == 0x00EA0000){
+        //Serial.print("Request ");
+        if (_rxBuf[0] == 0xEB && _rxBuf[1] == 0xFE) sendComponentInfo(compID);
+    }
 }
 void SSS::processCAN3message(){
  Serial.print("CAN3 RX, ");
@@ -1182,7 +1175,27 @@ void SSS::buildCANmessage()
   numCANmsgs++;
 }
 
-
+void SSS::sendComponentInfo(char id[29])
+{
+       Serial.print("Received Request for Component ID. Sending  ");
+       for (int i = 0; i<28;i++) Serial.print(id[i]);
+       Serial.println();
+       byte transport0[8] = {32,28,0,4,0xFF,0xEB,0xFE,0};
+       byte transport1[8] = {1,id[0],id[1],id[2],id[3],id[4],id[5],id[6]};
+       byte transport2[8] = {2,id[7],id[8],id[9],id[10],id[11],id[12],id[13]};
+       byte transport3[8] = {3,id[14],id[15],id[16],id[17],id[18],id[19],id[20]};
+       byte transport4[8] = {4,id[21],id[22],id[23],id[24],id[25],id[26],id[27]};
+       CAN1.sendMsgBuf(0x1CECFF0B, 1, 8, transport0);
+       delay(3);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport1);
+       delay(3);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport2);
+       delay(2);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport3);
+       delay(2);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport4);
+       
+}
 void SSS::printHelp(){
   Serial.println("This is a helper message:");
 }

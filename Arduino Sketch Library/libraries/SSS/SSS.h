@@ -38,6 +38,7 @@ class SSS
     void printHelp();
     void buildCANmessage();
     int lookupIndex(char c);
+    void sendComponentInfo(char compID[29]);
     
     boolean CAN1Received = false;
     boolean CAN3Received = false;
@@ -46,6 +47,9 @@ class SSS
     void MCP2515RX1Int();
     void MCP2515RX3Int();
     
+    char compID[29];
+    
+
     void sendCANmessages();
 
     char command[100];
@@ -73,6 +77,7 @@ class SSS
     char data2[9]={0,0,0,0,0,0,0,0,0};
     byte buf[8];
     char CANmessage[14] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+    byte _rxBuf[8];
     
     byte len = 0;
  

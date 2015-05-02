@@ -41,7 +41,7 @@ the first nibble of the CAN message tells the SSS where to put the message.
 SSS sss = SSS(100); // Call the Smart Sensor Simulator library. 
 char command[100]; //declare the array to store serial command characters.
 
-String IDstring = "SYNER*SSS-ECMmake*ABCDEFG    ";
+String IDstring = "SYNER*SSS-ADEM4*1R90003     ";
 
 void setup()
 { 
@@ -162,7 +162,7 @@ void setup()
    
   Serial.println("Starting Up...");
   Serial.println("Synercon Technologies Smart Sensor Simulator");
-  Serial.println("Caterpillar ADEM4");
+  Serial.println(IDstring);
   Serial.println("Originally written by: Jeremy Daily on 6 Feb 2015");
   Serial.println("Last edited by:_____");
   
@@ -198,7 +198,8 @@ void loop(){
   
   //Transmit periodic CAN messages that are stored in memory.
   sss.sendCANmessages();
-
+  
+  //reads to see if component ID is available:
   sss.processCAN1message();
   
 } //end loop()
