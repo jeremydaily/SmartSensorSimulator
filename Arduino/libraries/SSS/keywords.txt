@@ -1,2 +1,0 @@
-SSS     KEYWORD1
-setDAC  KEYWORD2
