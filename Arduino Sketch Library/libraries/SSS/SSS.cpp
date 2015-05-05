@@ -6,11 +6,7 @@
 #include "SPI.h"
 #include "Mcp4261.h"
 #include "SSS.h"
-#include "I2C.h"
-
-
-MCP_CAN CAN1(6); // Set CS to PH3
-MCP_CAN CAN3(7); // Set CS to PH4
+#include "Wire.h"
 
 MCP4261 Mcp4261_U1 = MCP4261(  CSU1Pin,  rAB_ohms );
 MCP4261 Mcp4261_U2 = MCP4261(  CSU2Pin,  rAB_ohms );
@@ -36,12 +32,19 @@ void setPinModes()
     digitalWrite(CSU4Pin,HIGH);
     digitalWrite(CSU5Pin,HIGH);
 
+    pinMode(ADC15,INPUT);
    
     // initialize the digital pins.
     pinMode(PWMPin1, OUTPUT);
-    pinMode(PWMPin2, OUTPUT);
-    pinMode(PWMPin4, OUTPUT);
-
+    pinMode(LINwake, OUTPUT);
+    pinMode(LINcs, OUTPUT);
+    pinMode(LDACPin, OUTPUT);
+    
+    digitalWrite(PWMPin1, LOW);
+    digitalWrite(LINwake, LOW);
+    digitalWrite(LINcs, LOW);
+    digitalWrite(LDACPin, HIGH);
+    
     //Resistor Network Modes
     pinMode(E2WS1SelectPin, OUTPUT);
     pinMode(E2WS2SelectPin, OUTPUT);
@@ -49,7 +52,22 @@ void setPinModes()
     pinMode(E2WS4SelectPin, OUTPUT);
     pinMode(V2WS1SelectPin, OUTPUT);
     pinMode(V2WS2SelectPin, OUTPUT);
+    pinMode(Coil1Control, OUTPUT);
+    pinMode(Coil2Control, OUTPUT);
+    pinMode(Coil3Control, OUTPUT);
+    pinMode(Coil4Control, OUTPUT);
 
+    digitalWrite(E2WS1SelectPin, LOW);
+    digitalWrite(E2WS2SelectPin, LOW);
+    digitalWrite(E2WS3SelectPin, LOW);
+    digitalWrite(E2WS4SelectPin, LOW);
+    digitalWrite(V2WS1SelectPin, LOW);
+    digitalWrite(V2WS2SelectPin, LOW);
+    digitalWrite(Coil1Control, LOW);
+    digitalWrite(Coil2Control, LOW);
+    digitalWrite(Coil3Control, LOW);
+    digitalWrite(Coil4Control, LOW);
+    
     //CAN Termination Resistor Modes
     pinMode(J1939Term1Pin, OUTPUT);
     pinMode(J1939Term2Pin, OUTPUT);
@@ -57,8 +75,8 @@ void setPinModes()
     pinMode(CAN2Term2Pin, OUTPUT);
     pinMode(CAN3Term1Pin, OUTPUT);
     pinMode(CAN3Term2Pin, OUTPUT);
-
-
+    pinMode(CAN2FrontEnablePin,OUTPUT);
+    
     pinMode(GroundSelectU1_0,OUTPUT);
     pinMode(GroundSelectU1_1,OUTPUT);
     pinMode(GroundSelectU1_2,OUTPUT);
@@ -100,12 +118,14 @@ void setPinModes()
     pinMode(VccSelectU5_1,OUTPUT);
     pinMode(VccSelectU5_2,OUTPUT); 
     pinMode(VccSelectU5_3,OUTPUT);
+    
+    
 
-     Mcp4261_U1.scale = potFullScale;
-  Mcp4261_U2.scale = potFullScale;
-  Mcp4261_U3.scale = potFullScale;
-  Mcp4261_U4.scale = potFullScale;
-  Mcp4261_U5.scale = potFullScale;
+    Mcp4261_U1.scale = potFullScale;
+    Mcp4261_U2.scale = potFullScale;
+    Mcp4261_U3.scale = potFullScale;
+    Mcp4261_U4.scale = potFullScale;
+    Mcp4261_U5.scale = potFullScale;
  
 }
 
@@ -116,23 +136,16 @@ SSS::SSS()
 {
     setPinModes();
     displayCAN = false;
+    Wire.begin();
+    // Set up Serial Connections
     
-    boolean CAN1Received = false;
-    boolean CAN3Received = false;
-   
-
-    I2C I2c = I2C();
-    I2c.begin();
-    //Set up DAC values for the MCP4728
-   
-    
-   
+    Serial2.begin(9600); //J1708 
+  
 } 
 
 boolean SSS::isIgnitionOn()
 {
     return digitalRead(_ignitionPin);
-    
 }
 
 void SSS::sendCANmessages()
@@ -158,6 +171,7 @@ void SSS::processCAN1message(){
         if (_rxBuf[0] == 0xEB && _rxBuf[1] == 0xFE) sendComponentInfo(compID);
     }
 }
+
 void SSS::processCAN3message(){
  Serial.print("CAN3 RX, ");
  rxId = CAN1.getCanId();                    // Get message ID
@@ -173,14 +187,6 @@ void SSS::processCAN3message(){
    Serial.print(" ");
  }
  Serial.println();
-}
-
-void SSS::MCP2515RX1Int(){
-  CAN1Received = true;
-}
-
-void SSS::MCP2515RX3Int(){
-  CAN3Received = true;
 }
 
 
@@ -345,86 +351,6 @@ void SSS::processCommand(int numDataBytes)
       }
       
 }
-// void SSS::setDAC(){  //Settings are in millivolts.
-   
-  // digitalWrite(_LDACPin,LOW);
-  // for (int j=20; j<24; j++)
-  // {
-    // if (settings[j]>5000) settings[j]=5000;
-    // if (settings[j]<0) settings[j]=0;
-  // }
-    
-  // int VoutA = map(settings[20],0,3606,0,3000); //0x0BBB or 3003 = 3.616V on VoutA
-  // int VoutB = map(settings[21],0,3606,0,3000); //0x06BB or 1721 = 2.074V on VoutB
-  // int VoutC = map(settings[22],0,3606,0,3000); //0x08BB = 2.682V on VoutC
-  // int VoutD = map(settings[23],0,3606,0,3000); //0x0ABB = 3.298V on VoutD
-
-  // VoutA = constrain(VoutA,0,4095);
-  // VoutB = constrain(VoutB,0,4095);
-  // VoutC = constrain(VoutC,0,4095);
-  // VoutD = constrain(VoutD,0,4095);
-  
-  // byte dataOut[8] = {highByte(VoutA),lowByte(VoutA),highByte(VoutB),lowByte(VoutB),highByte(VoutC),lowByte(VoutC),highByte(VoutD),lowByte(VoutD)};
-  
-  
-  // int flag = I2c.write(_DACAddress,0,dataOut,8);             
-  // delay(10);
-  // digitalWrite(_LDACPin,HIGH);
-  // if (flag != 0) 
-  // {
-    // Serial.print("Setting DAC over I2C returned error flag of ");
-    // Serial.println(flag); 
-  // }
-  // delay(10);
- 
- 
-// }
-
-/* int SSS::setDAC1(int _mVA, int _mVB, int _mVC, int _mVD)
-{  //Settings are in millivolts.
-  digitalWrite(_LDACPin,LOW);
-  if (_mVA>5000) _mVA=5000;
-  if (_mVA<0) _mVA=0;
-  if (_mVB>5000) _mVB=5000;
-  if (_mVB<0) _mVB=0;
-  if (_mVC>5000) _mVC=5000;
-  if (_mVC<0) _mVC=0;
-  if (_mVD>5000) _mVD=5000;
-  if (_mVD<0) _mVD=0;
-    
-  int VoutA = map(_mVA,0,3606,0,3000); //0x0BBB or 3003 = 3.616V on VoutA
-  int VoutB = map(_mVB,0,3606,0,3000); //0x06BB or 1721 = 2.074V on VoutB
-  int VoutC = map(_mVC,0,3606,0,3000); //0x08BB = 2.682V on VoutC
-  int VoutD = map(_mVD,0,3606,0,3000); //0x0ABB = 3.298V on VoutD
-
-  VoutA = constrain(VoutA,0,4095);
-  VoutB = constrain(VoutB,0,4095);
-  VoutC = constrain(VoutC,0,4095);
-  VoutD = constrain(VoutD,0,4095);
-  
-  I2C.beginTransmission(_DACAddress);
-  I2C.write(byte(0x50));             
-  I2C.write(highByte(VoutA));             
-  I2C.write(lowByte(VoutA));             
-  I2C.write(highByte(VoutB));             
-  I2C.write(lowByte(VoutB));             
-  I2C.write(highByte(VoutC));             
-  I2C.write(lowByte(VoutC));             
-  I2C.write(highByte(VoutD));             
-  I2C.write(lowByte(VoutD));             
-  int flag = I2C.endTransmission(); 
-
-  if (flag != 0) 
-  {
-    Serial.print("Setting DAC over I2C returned error flag of ");
-    Serial.println(flag); 
-  }
-  delay(10);
-  digitalWrite(_LDACPin,HIGH);
-  
-  return flag;
-} */
-
 
 
 int SSS::lookupIndex(char c){
@@ -494,6 +420,10 @@ int SSS::lookupIndex(char c){
     else if (c == '\\') return 36;
     else if (c == '|') return 37;
     else if (c == '=') return 78;
+    else if (c == '1') return 79;
+    else if (c == '2') return 80;
+    else if (c == '3') return 81;
+    else if (c == '4') return 82;
 
     else
       return -1;
@@ -558,47 +488,16 @@ void SSS::printHelp(){
 SSS sss = SSS(); // Call the Smart Sensor Simulator library. 
 
     
-void setDAC(){  //Settings are in millivolts.
-   
-  digitalWrite(LDACPin,LOW);
-  for (int j=20; j<24; j++)
-  {
-    if (sss.settings[j]>5000) sss.settings[j]=5000;
-    if (sss.settings[j]<0) sss.settings[j]=0;
-  }
-    
-  int VoutA = map(sss.settings[20],0,3606,0,3000); //0x0BBB or 3003 = 3.616V on VoutA
-  int VoutB = map(sss.settings[21],0,3606,0,3000); //0x06BB or 1721 = 2.074V on VoutB
-  int VoutC = map(sss.settings[22],0,3606,0,3000); //0x08BB = 2.682V on VoutC
-  int VoutD = map(sss.settings[23],0,3606,0,3000); //0x0ABB = 3.298V on VoutD
 
-  VoutA = constrain(VoutA,0,4095);
-  VoutB = constrain(VoutB,0,4095);
-  VoutC = constrain(VoutC,0,4095);
-  VoutD = constrain(VoutD,0,4095);
-  
-  byte dataOut[9] = {0x50,highByte(VoutA),lowByte(VoutA),highByte(VoutB),lowByte(VoutB),highByte(VoutC),lowByte(VoutC),highByte(VoutD),lowByte(VoutD)};
-  
-  
-  int flag = I2c.write(DACAddress,0,dataOut,9);             
-  delay(10);
-  digitalWrite(LDACPin,HIGH);
-  if (flag != 0) 
-  {
-    Serial.print("Setting DAC over I2C returned error flag of ");
-    Serial.println(flag); 
-  }
-  delay(10);
- 
- 
-}
+
 
 void adjustSetting(int i)
 {
- 
+  const String decrementCommands[83] = {"q","w","e","r","t","y","u","i","a","s","d","f","g","h","j","k","z","x","c","v","b","n","m","o","p","l","`","<",".",">","/","?","[","{","]","}","\\","|","^q","^w","^e","^r","^t","^y","^u","^i","^a","^s","^d","^f","^g","^h","^j","^k","^z","^x","^c","^v","_q","_w","_e","_r","_t","_y","_u","_i","_a","_s","_d","_f","_g","_h","_j","_k","_z","_x","_c","_v","=","1","2","3","4"};
+  
   Serial.print(i);
   Serial.print(" ");
-  Serial.print(sss.decrementCommands[i]);
+  Serial.print(decrementCommands[i]);
   Serial.print(" ");
  
   switch (i){
@@ -704,35 +603,35 @@ void adjustSetting(int i)
       break;
     case 20:
       setDAC();
-      Serial.print("VoutA (J24-20): ");
+      Serial.print("VoutA (J24-19): ");
       Serial.println(sss.settings[i]);
       break;
     case 21:
       setDAC();
-      Serial.print("VoutB (J24-21): ");
+      Serial.print("VoutB (J24-20): ");
       Serial.println(sss.settings[i]);
       break;
     case 22:
       setDAC();
-      Serial.print("VoutC (J24-22): ");
+      Serial.print("VoutC (J24-21): ");
       Serial.println(sss.settings[i]);
       break;
     case 23:
       setDAC();
-      Serial.print("VoutD (J24-19): ");
+      Serial.print("VoutD (J24-22): ");
       Serial.println(sss.settings[i]);
       break;
-    case 24:
+    case 24:// Only on rev 9 and 8 boards
       pwm_1 = map(sss.settings[i],0,100,0,255);
       analogWrite(PWMPin1,pwm_1); //192 = 3.70 volts on PWM1
       Serial.print("PWM1 (J24-23): ");
       Serial.println(sss.settings[i]);
       break;
     case 25:
-      pwm_2 = map(sss.settings[i],0,100,0,255);
-      analogWrite(PWMPin2,pwm_2); //192 = 3.70 volts on PWM1
-      Serial.print("PWM2 (J24-24): ");
-      Serial.println(sss.settings[i]);
+      //pwm_2 = map(sss.settings[i],0,100,0,255);
+      //analogWrite(PWMPin2,pwm_2); //192 = 3.70 volts on PWM1
+      Serial.println("PWM2 (Not Connected)");
+      //Serial.println(sss.settings[i]);
       break;
     case 26:
       digitalWrite(J1939Term1Pin,sss.settings[i]);
@@ -784,55 +683,55 @@ void adjustSetting(int i)
       break;
     case 32:
       digitalWrite(V2WS1SelectPin,sss.settings[i]);
-      Serial.print("V2WS1: ");
+      Serial.print("V2WS1 (J18-12): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 7 ohms to Vehicle Sense Return (GND)");
-      else if (sss.settings[i] == 1) Serial.println(" = 7 ohms to Vehicle Supply (+5V)");
+      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Vehicle Sense Return (J18-13)");
+      else if (sss.settings[i] == 1) Serial.println(" = 8 ohms to Vehicle Supply (J18-18)");
       else Serial.println(" Value out of bounds.");
       break;
     case 33:
       digitalWrite(V2WS2SelectPin,sss.settings[i]);
-      Serial.print("V2WS2: ");
+      Serial.print("V2WS2 (J18-8): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 7 ohms to Vehicle Sense Return (GND)");
-      else if (sss.settings[i] == 1) Serial.println(" = 7 ohms to Vehicle Supply (+5V)");
+      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Vehicle Sense Return (J18-13)");
+      else if (sss.settings[i] == 1) Serial.println(" = 8 ohms to Vehicle Supply (J18-18)");
       else Serial.println(" Value out of bounds.");
       break;
     case 34:
       digitalWrite(E2WS1SelectPin,sss.settings[i]);
-      Serial.print("E2WS1: ");
+      Serial.print("E2WS1 (J24-5): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 7 ohms to Engine Sense Return (GND)");
-      else if (sss.settings[i] == 1) Serial.println(" = 7 ohms to Engine Supply (+5V)");
+      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else if (sss.settings[i] == 1 ) Serial.println(" = 10 ohms to +12V Engine Supply (J24-13)");
       else Serial.println(" Value out of bounds.");
       break;
     case 35:
       digitalWrite(E2WS2SelectPin,sss.settings[i]);
-      Serial.print("E2WS2: ");
+      Serial.print("E2WS2 (J24-6): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 7 ohms to Engine Sense Return (GND)");
-      else if (sss.settings[i] == 1) Serial.println(" = 7 ohms to Engine Supply (+5V)");
+      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else if (sss.settings[i] == 1) Serial.println(" = 10 ohms to +12V Engine Supply (J24-13)");
       else Serial.println(" Value out of bounds.");
       break;
     case 36:
       digitalWrite(E2WS3SelectPin,sss.settings[i]);
-      Serial.print("E2WS3: ");
+      Serial.print("E2WS3 (J24-7): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 7 ohms to Engine Sense Return (GND)");
-      else if (sss.settings[i] == 1) Serial.println(" = 7 ohms to Engine Supply (+5V)");
+      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else if (sss.settings[i] == 1) Serial.println(" = 10 ohms to +12V Engine Supply (J24-13)");
       else Serial.println(" Value out of bounds.");
       break;
     case 37:
       digitalWrite(E2WS4SelectPin,sss.settings[i]);
-      Serial.print("E2WS4: ");
+      Serial.print("E2WS4 (J24-8): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 7 ohms to Engine Sense Return (GND)");
-      else if (sss.settings[i] == 1) Serial.println(" = 7 ohms to Engine Supply (+5V)");
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to Ground");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to +12V Engine Supply");
       else Serial.println(" Value out of bounds.");
       break;
     case 38:
       digitalWrite(VccSelectU1_0,sss.settings[i]);
-      Serial.print("VccSelectU1_0: ");
+      Serial.print("VccSelectU1_0 (J16-9): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -840,7 +739,7 @@ void adjustSetting(int i)
       break;
     case 39:
       digitalWrite(VccSelectU1_1,sss.settings[i]);
-      Serial.print("VccSelectU1_1: ");
+      Serial.print("VccSelectU1_1 (J16-10): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -848,7 +747,7 @@ void adjustSetting(int i)
       break;
     case 40:
       digitalWrite(VccSelectU1_2,sss.settings[i]);
-      Serial.print("VccSelectU1_2: ");
+      Serial.print("VccSelectU1_2 (J16-11):");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -856,7 +755,7 @@ void adjustSetting(int i)
       break;
     case 41:
       digitalWrite(VccSelectU1_3,sss.settings[i]);
-      Serial.print("VccSelectU1_3: ");
+      Serial.print("VccSelectU1_3 (J16-13): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -864,23 +763,23 @@ void adjustSetting(int i)
       break;
     case 42:
       digitalWrite(VccSelectU2_0,sss.settings[i]);
-      Serial.print("VccSelectU2_0: ");
+      Serial.print("VccSelectU2_0 (J18-2): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Vehicle Supply (+5V)");
-      else if (sss.settings[i] == 1) Serial.println(" = Vehicle Supply is Disconnected");
+      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
+      else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 43:
       digitalWrite(VccSelectU2_1,sss.settings[i]);
-      Serial.print("VccSelectU2_1: ");
+      Serial.print("VccSelectU2_1 (J18-3): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Vehicle Supply (+5V)");
-      else if (sss.settings[i] == 1) Serial.println(" = Vehicle Supply is Disconnected");
+      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
+      else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 44:
       digitalWrite(VccSelectU2_2,sss.settings[i]);
-      Serial.print("VccSelectU2_2: ");
+      Serial.print("VccSelectU2_2 (J18-6): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Vehicle Supply (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = Vehicle Supply is Disconnected");
@@ -888,7 +787,7 @@ void adjustSetting(int i)
       break;
     case 45:
       digitalWrite(VccSelectU2_3,sss.settings[i]);
-      Serial.print("VccSelectU2_3: ");
+      Serial.print("VccSelectU2_3 (J18-7): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Vehicle Supply (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = Vehicle Supply is Disconnected");
@@ -896,7 +795,7 @@ void adjustSetting(int i)
       break;
     case 46:
       digitalWrite(VccSelectU3_0,sss.settings[i]);
-      Serial.print("VccSelectU3_0: ");
+      Serial.print("VccSelectU3_0 (J10-4): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -904,7 +803,7 @@ void adjustSetting(int i)
       break;
     case 47:
       digitalWrite(VccSelectU3_1,sss.settings[i]);
-      Serial.print("VccSelectU3_1: ");
+      Serial.print("VccSelectU3_1 (J10-9): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -912,7 +811,7 @@ void adjustSetting(int i)
       break;
     case 48:
       digitalWrite(VccSelectU3_2,sss.settings[i]);
-      Serial.print("VccSelectU3_2: ");
+      Serial.print("VccSelectU3_2 (J10-5): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -920,7 +819,7 @@ void adjustSetting(int i)
       break;
     case 49:
       digitalWrite(VccSelectU3_3,sss.settings[i]);
-      Serial.print("VccSelectU3_3: ");
+      Serial.print("VccSelectU3_3 (J10-10: ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -928,39 +827,39 @@ void adjustSetting(int i)
       break;
     case 50:
       digitalWrite(VccSelectU4_0,sss.settings[i]);
-      Serial.print("VccSelectU4_0: ");
+      Serial.print("VccSelectU4_0 (J24-15): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Engine Supply (+5V)");
-      else if (sss.settings[i] == 1) Serial.println(" = Engine Supply is Disconnected");
+      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
+      else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 51:
       digitalWrite(VccSelectU4_1,sss.settings[i]);
-      Serial.print("VccSelectU4_1: ");
+      Serial.print("VccSelectU4_1 (J24-16): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Engine Supply (+5V)");
-      else if (sss.settings[i] == 1) Serial.println(" = Engine Supply is Disconnected");
+      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
+      else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 52:
       digitalWrite(VccSelectU4_2,sss.settings[i]);
-      Serial.print("VccSelectU4_2: ");
+      Serial.print("VccSelectU4_2 (J24-17): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Engine Supply (+5V)");
-      else if (sss.settings[i] == 1) Serial.println(" = Engine Supply is Disconnected");
+      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
+      else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 53:
       digitalWrite(VccSelectU4_3,sss.settings[i]);
-      Serial.print("VccSelectU4_3: ");
+      Serial.print("VccSelectU4_3 (J24-18): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to Engine Supply (+5V)");
-      else if (sss.settings[i] == 1) Serial.println(" = Engine Supply is Disconnected");
+      if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
+      else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 54:
       digitalWrite(VccSelectU5_0,sss.settings[i]);
-      Serial.print("VccSelectU5_0: ");
+      Serial.print("VccSelectU5_0 (J10-7): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -968,7 +867,7 @@ void adjustSetting(int i)
       break;
     case 55:
       digitalWrite(VccSelectU5_1,sss.settings[i]);
-      Serial.print("VccSelectU5_1: ");
+      Serial.print("VccSelectU5_1 (J24-9): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -976,7 +875,7 @@ void adjustSetting(int i)
       break;
     case 56:
       digitalWrite(VccSelectU5_2,sss.settings[i]);
-      Serial.print("VccSelectU5_2: ");
+      Serial.print("VccSelectU5_2 (J24-10): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -984,7 +883,7 @@ void adjustSetting(int i)
       break;
     case 57:
       digitalWrite(VccSelectU5_3,sss.settings[i]);
-      Serial.print("VccSelectU5_3: ");
+      Serial.print("VccSelectU5_3 (J24-14): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Pulled Up to VCC (+5V)");
       else if (sss.settings[i] == 1) Serial.println(" = VCC is Disconnected");
@@ -992,7 +891,7 @@ void adjustSetting(int i)
       break;
     case 58:
       digitalWrite(GroundSelectU1_0,sss.settings[i]);
-      Serial.print("GroundSelectU1_0: ");
+      Serial.print("GroundSelectU1_0 (J16-9): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1000,7 +899,7 @@ void adjustSetting(int i)
       break;
     case 59:
       digitalWrite(GroundSelectU1_1,sss.settings[i]);
-      Serial.print("GroundSelectU1_1: ");
+      Serial.print("GroundSelectU1_1 (J16-10): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1008,7 +907,7 @@ void adjustSetting(int i)
       break;
     case 60:
       digitalWrite(GroundSelectU1_2,sss.settings[i]);
-      Serial.print("GroundSelectU1_2: ");
+      Serial.print("GroundSelectU1_2 (J16-11): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1016,7 +915,7 @@ void adjustSetting(int i)
       break;
     case 61:
       digitalWrite(GroundSelectU1_3,sss.settings[i]);
-      Serial.print("GroundSelectU1_3: ");
+      Serial.print("GroundSelectU1_3 (J16-13): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1024,23 +923,23 @@ void adjustSetting(int i)
       break;
     case 62:
       digitalWrite(GroundSelectU2_0,sss.settings[i]);
-      Serial.print("GroundSelectU2_0: ");
+      Serial.print("GroundSelectU2_0 (J18-2): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Grounded to Vehicle Sense Return");
+      if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 63:
       digitalWrite(GroundSelectU2_1,sss.settings[i]);
-      Serial.print("GroundSelectU2_1: ");
+      Serial.print("GroundSelectU2_1 (J18-3): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Grounded to Vehicle Sense Return");
+      if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 64:
       digitalWrite(GroundSelectU2_2,sss.settings[i]);
-      Serial.print("GroundSelectU2_2: ");
+      Serial.print("GroundSelectU2_2 (J18-6): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to Vehicle Sense Return");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1048,7 +947,7 @@ void adjustSetting(int i)
       break;
     case 65:
       digitalWrite(GroundSelectU2_3,sss.settings[i]);
-      Serial.print("GroundSelectU2_3: ");
+      Serial.print("GroundSelectU2_3 (J18-7): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to Vehicle Sense Return");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1056,7 +955,7 @@ void adjustSetting(int i)
       break;
     case 66:
       digitalWrite(GroundSelectU3_0,sss.settings[i]);
-      Serial.print("GroundSelectU3_0: ");
+      Serial.print("GroundSelectU3_0 (J10-4): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1064,7 +963,7 @@ void adjustSetting(int i)
       break;
     case 67:
       digitalWrite(GroundSelectU3_1,sss.settings[i]);
-      Serial.print("GroundSelectU3_1: ");
+      Serial.print("GroundSelectU3_1 (J10-9): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1072,7 +971,7 @@ void adjustSetting(int i)
       break;
     case 68:
       digitalWrite(GroundSelectU3_2,sss.settings[i]);
-      Serial.print("GroundSelectU3_2: ");
+      Serial.print("GroundSelectU3_2 (J10-5): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1080,7 +979,7 @@ void adjustSetting(int i)
       break;
     case 69:
       digitalWrite(GroundSelectU3_3,sss.settings[i]);
-      Serial.print("GroundSelectU3_3: ");
+      Serial.print("GroundSelectU3_3 (J10-10): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1088,39 +987,39 @@ void adjustSetting(int i)
       break;
     case 70:
       digitalWrite(GroundSelectU4_0,sss.settings[i]);
-      Serial.print("GroundSelectU4_0: ");
+      Serial.print("GroundSelectU4_0 (J24-15): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Grounded to Engine Sense Return");
+      if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 71:
       digitalWrite(GroundSelectU4_1,sss.settings[i]);
-      Serial.print("GroundSelectU4_1: ");
+      Serial.print("GroundSelectU4_1 (J24-16): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Grounded to Engine Sense Return");
+      if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 72:
       digitalWrite(GroundSelectU4_2,sss.settings[i]);
-      Serial.print("GroundSelectU4_2: ");
+      Serial.print("GroundSelectU4_2 (J24-17): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Grounded to Engine Sense Return");
+      if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 73:
       digitalWrite(GroundSelectU4_3,sss.settings[i]);
-      Serial.print("GroundSelectU4_3: ");
+      Serial.print("GroundSelectU4_3 (J24-18): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Grounded to Engine Sense Return");
+      if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
       else Serial.println(" Value out of bounds.");
       break;
     case 74:
       digitalWrite(GroundSelectU5_0,sss.settings[i]);
-      Serial.print("GroundSelectU5_0: ");
+      Serial.print("GroundSelectU5_0 (J10-7): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1128,7 +1027,7 @@ void adjustSetting(int i)
       break;
     case 75:
       digitalWrite(GroundSelectU5_1,sss.settings[i]);
-      Serial.print("GroundSelectU5_1: ");
+      Serial.print("GroundSelectU5_1 (J24-9): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1136,7 +1035,7 @@ void adjustSetting(int i)
       break;
     case 76:
       digitalWrite(GroundSelectU5_2,sss.settings[i]);
-      Serial.print("GroundSelectU5_2: ");
+      Serial.print("GroundSelectU5_2 (J24-10): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1144,7 +1043,7 @@ void adjustSetting(int i)
       break;
     case 77:
       digitalWrite(GroundSelectU5_3,sss.settings[i]);
-      Serial.print("GroundSelectU5_3: ");
+      Serial.print("GroundSelectU5_3 (J24-14): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 0) Serial.println(" = Grounded to GND");
       else if (sss.settings[i] == 1) Serial.println(" = Disconnected");
@@ -1154,17 +1053,80 @@ void adjustSetting(int i)
       digitalWrite(CAN2FrontEnablePin,sss.settings[i]);
       Serial.print("CAN2 Panel Enable: ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Not Connected");
-      else if (sss.settings[i] == 1) Serial.println(" = CAN2 on Front Panel Connected");
+      if (sss.settings[i] == 1) Serial.println(" = Not Connected");
+      else if (sss.settings[i] == 0) Serial.println(" = CAN2 on Front Panel Connected");
       else Serial.println(" Value out of bounds.");
       break;
     case 79:
-      digitalWrite(CAN2FrontEnablePin,sss.settings[i]);
-      Serial.print("CAN2 Panel Enable: ");
+      digitalWrite(Coil1Control,sss.settings[i]);
+      Serial.print("Coil 1 Control (J16-16): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Not Connected");
-      else if (sss.settings[i] == 1) Serial.println(" = CAN2 on Front Panel Connected");
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else Serial.println(" Value out of bounds.");
+      break;
+    case 80:
+      digitalWrite(Coil2Control,sss.settings[i]);
+      Serial.print("Coil 2 Control (J16-15): ");
+      Serial.print(sss.settings[i]);
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else Serial.println(" Value out of bounds.");
+      break;
+    case 81:
+      digitalWrite(Coil3Control,sss.settings[i]);
+      Serial.print("Coil 3 Control (J16-14): ");
+      Serial.print(sss.settings[i]);
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else Serial.println(" Value out of bounds.");
+      break;
+    case 82:
+      digitalWrite(Coil4Control,sss.settings[i]);
+      Serial.print("Coil 4 Control (J24-24): ");
+      Serial.print(sss.settings[i]);
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
   }
 }  
+
+void setDAC(){  //Settings are in millivolts.
+  digitalWrite(LDACPin,LOW);
+  for (int j=20; j<24; j++)
+  {
+    if (sss.settings[j]>5000) sss.settings[j]=5000;
+    if (sss.settings[j]<0) sss.settings[j]=0;
+  }
+    
+  int VoutA = map(sss.settings[20],0,3606,0,3000); //0x0BBB or 3003 = 3.616V on VoutA
+  int VoutB = map(sss.settings[21],0,3606,0,3000); //0x06BB or 1721 = 2.074V on VoutB
+  int VoutC = map(sss.settings[22],0,3606,0,3000); //0x08BB = 2.682V on VoutC
+  int VoutD = map(sss.settings[23],0,3606,0,3000); //0x0ABB = 3.298V on VoutD
+
+  VoutA = constrain(VoutA,0,4095);
+  VoutB = constrain(VoutB,0,4095);
+  VoutC = constrain(VoutC,0,4095);
+  VoutD = constrain(VoutD,0,4095);
+  
+  Wire.beginTransmission(DACAddress);
+  Wire.write(byte(0x50));             
+  Wire.write(highByte(VoutA));             
+  Wire.write(lowByte(VoutA));             
+  Wire.write(highByte(VoutB));             
+  Wire.write(lowByte(VoutB));             
+  Wire.write(highByte(VoutC));             
+  Wire.write(lowByte(VoutC));             
+  Wire.write(highByte(VoutD));             
+  Wire.write(lowByte(VoutD));             
+  int flag = Wire.endTransmission(); 
+
+  if (flag != 0) 
+  {
+    Serial.print("Setting DAC over I2C returned error flag of ");
+    Serial.println(flag); 
+  }
+  delay(10);
+  digitalWrite(LDACPin,HIGH);
+}
