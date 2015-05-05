@@ -38,7 +38,7 @@ the first nibble of the CAN message tells the SSS where to put the message.
 #include <Mcp4261.h>
 #include <SSS.h>
 
-SSS sss = SSS(100); // Call the Smart Sensor Simulator library. 
+//SSS sss = SSS(100); // Call the Smart Sensor Simulator library. 
 char command[100]; //declare the array to store serial command characters.
 
 String IDstring = "SYNER*SSS-ADEM4*1R90003     ";
@@ -179,7 +179,7 @@ void setup()
   
   IDstring.toCharArray(sss.compID,29);
 
-  for (int h = 0; h<83; h++) sss.adjustSetting(h);
+  for (int h = 0; h<83; h++) adjustSetting(h);
    
   
   Serial.println("Finished Starting Up... Type a command:");
