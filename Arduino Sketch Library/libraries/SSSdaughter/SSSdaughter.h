@@ -30,7 +30,7 @@ const int CSU1Pin = 81;
 const int CSU2Pin = 82;
 const int CSU3Pin = 83;
 const int CSU4Pin = 38;
-const int CSU5Pin = 40;
+const int CSU5Pin = 80;
  
 const int LDACPin = 41;
 const int DACAddress = 0x61;
@@ -48,9 +48,9 @@ const int GroundSelectU1_1 = 27;
 const int GroundSelectU1_2 = 28;
 const int GroundSelectU1_3 = 29;
 
-const int VccSelectU2_0 = 15;
-const int VccSelectU2_1 = 14;
-const int VccSelectU2_2 = 70;
+const int VccSelectU2_0 = 72;
+const int VccSelectU2_1 = 73;
+const int VccSelectU2_2 = 74;
 const int VccSelectU2_3 = 71;
 const int GroundSelectU2_0 = 72;
 const int GroundSelectU2_1 = 73;
@@ -75,46 +75,46 @@ const int GroundSelectU4_1 = 44;
 const int GroundSelectU4_2 = 43;
 const int GroundSelectU4_3 = 42;
 
-const int VccSelectU5_0 = 62;
-const int VccSelectU5_1 = 63;
-const int VccSelectU5_2 = 64;
-const int VccSelectU5_3 = 65;
-const int GroundSelectU5_0 = 66;
-const int GroundSelectU5_1 = 67;
-const int GroundSelectU5_2 = 68;
-const int GroundSelectU5_3 = 39;
+const int VccSelectU5_0 = 69;
+const int VccSelectU5_1 = 68;
+const int VccSelectU5_2 = 67;
+const int VccSelectU5_3 = 66;
+const int GroundSelectU5_0 = 65;
+const int GroundSelectU5_1 = 64;
+const int GroundSelectU5_2 = 63;
+const int GroundSelectU5_3 = 62;
 
-const int Coil1Control = 76;
-const int Coil2Control = 5;
-const int Coil3Control = 79;
-const int Coil4Control = 80;
+const int Coil1Control = 84;
+const int Coil2Control = 39;
+const int Coil3Control = 40;
+const int Coil4Control = 41;
+const int Coil5Control = 58;
+const int Coil6Control = 59;
+const int Coil7Control = 60;
+const int Coil8Control = 61;
 
-const int LINwake = 85;
-const int ADC15 = 69;
-const int LINcs = 4;
+const int ADC0 = 54;
+const int ADC1 = 55;
+const int ADC2 = 56;
+const int ADC3 = 57;
 
 
-//Resistor Network Selections (pull Up or Pull down)
-const int E2WS1SelectPin = 10;
-const int E2WS2SelectPin = 11;
-const int E2WS3SelectPin = 12;
-const int E2WS4SelectPin = 13;
-const int V2WS1SelectPin = 60;
-const int V2WS2SelectPin = 61;
+const int J1939Select = 79;
+const int LEDpin = 77;
 
 //CAN Termination Resistor Selections
-const int J1939Term1Pin = 54;
-const int J1939Term2Pin = 55;
-const int CAN2Term1Pin = 56;
-const int CAN2Term2Pin = 57;
-const int CAN3Term1Pin = 58;
-const int CAN3Term2Pin = 59;
-const int CAN2FrontEnablePin = 84;
+const int CAN4Term1Pin = 85;
+const int CAN4Term2Pin = 4;
  
  
-const int PWMPin1 = 8; //PH5
-const int PWMPin2 = 9; //PH6
-//const int PWMPin4 = 4; //PG5 in Rev 9b
+const int PWM1Pin = 10; 
+const int PWM2Pin = 11; 
+const int PWM3Pin = 12; 
+const int PWM4Pin = 13; 
+const int PWM5Pin = 6; 
+const int PWM6Pin = 7; 
+const int PWM7Pin = 8; 
+const int PWM8Pin = 9;
 
 const int potFullScale = 100;
 const float rAB_ohms = 10000.00; // 10k Ohm
@@ -138,9 +138,8 @@ class SSS
     int lookupIndex(char c);
     void sendComponentInfo(char compID[29]);
     void sendCANmessages();
-    void processCAN1message();    
-    void processCAN3message();  
-    
+    void processCAN4message();    
+   
     
     
     char compID[29];
@@ -151,8 +150,7 @@ class SSS
     int settings[83]; 
 
     //declare instances of the CAN class
-    MCP_CAN CAN1 = MCP_CAN(6); // Set CS to PH3
-    MCP_CAN CAN3 = MCP_CAN(7); // Set CS to PH4
+    MCP_CAN CAN4 = MCP_CAN(53); // 
     
       
     
@@ -193,7 +191,7 @@ class SSS
     boolean validHex;
     boolean displayCAN = false;
     
-    const int _ignitionPin = 77;
+    const int _ignitionPin = 5;
 
 
 };

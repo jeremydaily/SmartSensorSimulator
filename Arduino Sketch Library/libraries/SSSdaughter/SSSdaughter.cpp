@@ -5,7 +5,7 @@
 #include "mcp_can.h"
 #include "SPI.h"
 #include "Mcp4261.h"
-#include "SSS.h"
+#include "SSSdaughter.h"
 #include "Wire.h"
 
 MCP4261 Mcp4261_U1 = MCP4261(  CSU1Pin,  rAB_ohms );
@@ -16,6 +16,13 @@ MCP4261 Mcp4261_U5 = MCP4261(  CSU5Pin,  rAB_ohms );
 
 int pwm_1;
 int pwm_2; 
+int pwm_3;
+int pwm_4;
+int pwm_5;
+int pwm_6;
+int pwm_7;
+int pwm_8;
+
 
 void setPinModes()
 {   
@@ -32,50 +39,58 @@ void setPinModes()
     digitalWrite(CSU4Pin,HIGH);
     digitalWrite(CSU5Pin,HIGH);
 
-    pinMode(ADC15,INPUT);
+    pinMode(ADC0,INPUT);
+    pinMode(ADC1,INPUT);
+    pinMode(ADC2,INPUT);
+    pinMode(ADC3,INPUT);
    
     // initialize the digital pins.
-    pinMode(PWMPin1, OUTPUT);
-    pinMode(LINwake, OUTPUT);
-    pinMode(LINcs, OUTPUT);
-    pinMode(LDACPin, OUTPUT);
+    pinMode(PWM1Pin, OUTPUT);
+    pinMode(PWM2Pin, OUTPUT);
+    pinMode(PWM3Pin, OUTPUT);
+    pinMode(PWM4Pin, OUTPUT);
+    pinMode(PWM5Pin, OUTPUT);
+    pinMode(PWM6Pin, OUTPUT);
+    pinMode(PWM7Pin, OUTPUT);
+    pinMode(PWM8Pin, OUTPUT);
     
-    digitalWrite(PWMPin1, LOW);
-    digitalWrite(LINwake, LOW);
-    digitalWrite(LINcs, LOW);
-    digitalWrite(LDACPin, HIGH);
+    
+    digitalWrite(PWM1Pin, LOW);
+    digitalWrite(PWM2Pin, LOW);
+    digitalWrite(PWM3Pin, LOW);
+    digitalWrite(PWM4Pin, LOW);
+    digitalWrite(PWM5Pin, LOW);
+    digitalWrite(PWM6Pin, LOW);
+    digitalWrite(PWM7Pin, LOW);
+    digitalWrite(PWM8Pin, LOW);
     
     //Resistor Network Modes
-    pinMode(E2WS1SelectPin, OUTPUT);
-    pinMode(E2WS2SelectPin, OUTPUT);
-    pinMode(E2WS3SelectPin, OUTPUT);
-    pinMode(E2WS4SelectPin, OUTPUT);
-    pinMode(V2WS1SelectPin, OUTPUT);
-    pinMode(V2WS2SelectPin, OUTPUT);
     pinMode(Coil1Control, OUTPUT);
     pinMode(Coil2Control, OUTPUT);
     pinMode(Coil3Control, OUTPUT);
     pinMode(Coil4Control, OUTPUT);
+    pinMode(Coil5Control, OUTPUT);
+    pinMode(Coil6Control, OUTPUT);
+    pinMode(Coil7Control, OUTPUT);
+    pinMode(Coil8Control, OUTPUT);
 
-    digitalWrite(E2WS1SelectPin, LOW);
-    digitalWrite(E2WS2SelectPin, LOW);
-    digitalWrite(E2WS3SelectPin, LOW);
-    digitalWrite(E2WS4SelectPin, LOW);
-    digitalWrite(V2WS1SelectPin, LOW);
-    digitalWrite(V2WS2SelectPin, LOW);
-    digitalWrite(Coil1Control, LOW);
-    digitalWrite(Coil2Control, LOW);
-    digitalWrite(Coil3Control, LOW);
-    digitalWrite(Coil4Control, LOW);
+    digitalWrite(Coil1Control, HIGH);
+    digitalWrite(Coil2Control, HIGH);
+    digitalWrite(Coil3Control, HIGH);
+    digitalWrite(Coil4Control, HIGH);
+    digitalWrite(Coil5Control, HIGH);
+    digitalWrite(Coil6Control, HIGH);
+    digitalWrite(Coil7Control, HIGH);
+    digitalWrite(Coil8Control, HIGH);
     
     //CAN Termination Resistor Modes
-    pinMode(J1939Term1Pin, OUTPUT);
-    pinMode(J1939Term2Pin, OUTPUT);
-    pinMode(CAN2Term1Pin, OUTPUT);
-    pinMode(CAN2Term2Pin, OUTPUT);
-    pinMode(CAN3Term1Pin, OUTPUT);
-    pinMode(CAN3Term2Pin, OUTPUT);
-    pinMode(CAN2FrontEnablePin,OUTPUT);
+    pinMode(J1939Select, OUTPUT);
+    pinMode(CAN4Term1Pin, OUTPUT);
+    pinMode(CAN4Term2Pin, OUTPUT);
+    
+    digitalWrite(J1939Select,LOW);
+    digitalWrite(CAN4Term1Pin,HIGH);
+    digitalWrite(CAN4Term2Pin,LOW);
     
     pinMode(GroundSelectU1_0,OUTPUT);
     pinMode(GroundSelectU1_1,OUTPUT);
@@ -137,9 +152,7 @@ SSS::SSS()
     setPinModes();
     displayCAN = false;
     Wire.begin();
-    // Set up Serial Connections
-    
-    Serial2.begin(9600); //J1708 
+   
   
 } 
 
@@ -155,29 +168,29 @@ void SSS::sendCANmessages()
       unsigned long currentMillis = millis();
       if ((currentMillis - previousCANmillis[i]) > CANtxPeriod[i]) { // Do this on time.
         previousCANmillis[i] = currentMillis;
-        if (CANchannel[i] == 0) CAN1.sendMsgBuf(CANIDs[i], 1, 8, CANmessages[i]); 
-        else if (CANchannel[i] == 32) CAN3.sendMsgBuf(CANIDs[i], 1, 8, CANmessages[i]); 
+        CAN4.sendMsgBuf(CANIDs[i], 1, 8, CANmessages[i]); 
+     
       } //end if
     } // end for
   } // end if
 }
 
 
-void SSS::processCAN1message(){
-    CAN1.readMsgBuf(&len, _rxBuf);              // Read data: len = data length, buf = data byte(s)
+/* void SSS::processCAN1message(){
+    CAN4.readMsgBuf(&len, _rxBuf);              // Read data: len = data length, buf = data byte(s)
     rxId = CAN1.getCanId();                    // Get message ID
     if ((rxId & 0x00FF0000) == 0x00EA0000){
         //Serial.print("Request ");
         if (_rxBuf[0] == 0xEB && _rxBuf[1] == 0xFE) sendComponentInfo(compID);
     }
-}
+} */
 
-void SSS::processCAN3message(){
+void SSS::processCAN4message(){
  Serial.print("CAN3 RX, ");
- rxId = CAN1.getCanId();                    // Get message ID
+ rxId = CAN4.getCanId();                    // Get message ID
  Serial.print("ID: ");
  Serial.print(rxId, HEX);
- CAN1.readMsgBuf(&len, buf);
+ CAN4.readMsgBuf(&len, buf);
  Serial.print(", DLC: ");
  Serial.print(len, HEX);
  Serial.print(", CAN message = ");
@@ -461,7 +474,7 @@ void SSS::buildCANmessage()
   numCANmsgs++;
 }
 
-void SSS::sendComponentInfo(char id[29])
+/* void SSS::sendComponentInfo(char id[29])
 {
        Serial.print("Received Request for Component ID. Sending  ");
        for (int i = 0; i<28;i++) Serial.print(id[i]);
@@ -481,7 +494,7 @@ void SSS::sendComponentInfo(char id[29])
        delay(2);
        CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport4);
        
-}
+} */
 void SSS::printHelp(){
   Serial.println("This is a helper message:");
 }
@@ -504,230 +517,218 @@ void adjustSetting(int i)
   switch (i){
     case 0:
       Mcp4261_U1.wiper0(sss.settings[i]);
-      Serial.print("U1-P0 (J16-9): ");
+      Serial.print("U1-P0 (J20-13): ");
       Serial.println(sss.settings[i]);
       break;
     case 1:
       Mcp4261_U1.wiper1(sss.settings[i]);
-      Serial.print("U1-P1 (J16-10): ");
+      Serial.print("U1-P1 (J20-14): ");
       Serial.println(sss.settings[i]);
       break;
     case 2:
       Mcp4261_U1.wiper2(sss.settings[i]);
-      Serial.print("U1-P2 (J16-11): ");
+      Serial.print("U1-P2 (J20-15): ");
       Serial.println(sss.settings[i]);
       break;
     case 3:
       Mcp4261_U1.wiper3(sss.settings[i]);
-      Serial.print("U1-P3 (J16-13): ");
+      Serial.print("U1-P3 (J20-16): ");
       Serial.println(sss.settings[i]);
       break;
     case 4:
       Mcp4261_U2.wiper0(sss.settings[i]);
-      Serial.print("U2-P0 (J18-2): ");
+      Serial.print("U2-P0 (J20-17): ");
       Serial.println(sss.settings[i]);
       break;
     case 5:
       Mcp4261_U2.wiper1(sss.settings[i]);
-      Serial.print("U2-P1 (J18-3): ");
+      Serial.print("U2-P1 (J20-18): ");
       Serial.println(sss.settings[i]);
       break;
     case 6:
       Mcp4261_U2.wiper2(sss.settings[i]);
-      Serial.print("U2-P2 (J18-6): ");
+      Serial.print("U2-P2 (J20-19): ");
       Serial.println(sss.settings[i]);
       break;
     case 7:
       Mcp4261_U2.wiper3(sss.settings[i]);
-      Serial.print("U2-P3 (J18-7): ");
+      Serial.print("U2-P3 (J20-20): ");
       Serial.println(sss.settings[i]);
       break;
     case 8:
       Mcp4261_U3.wiper0(sss.settings[i]);
-      Serial.print("U3-P0 (J10-4): ");
+      Serial.print("U3-P0 (J22-15): ");
       Serial.println(sss.settings[i]);
       break;
     case 9:
       Mcp4261_U3.wiper1(sss.settings[i]);
-      Serial.print("U3-P1 (J10-9): ");
+      Serial.print("U3-P1 (J22-16): ");
       Serial.println(sss.settings[i]);
       break;
     case 10:
       Mcp4261_U3.wiper2(sss.settings[i]);
-      Serial.print("U3-P2 (J10-5): ");
+      Serial.print("U3-P2 (J22-17): ");
       Serial.println(sss.settings[i]);
       break;
     case 11:
       Mcp4261_U3.wiper3(sss.settings[i]);
-      Serial.print("U3-P3 (J10-10): ");
+      Serial.print("U3-P3 (J22-18): ");
       Serial.println(sss.settings[i]);
       break;
     case 12:
       Mcp4261_U4.wiper0(sss.settings[i]);
-      Serial.print("U4-P0 (J24-15): ");
+      Serial.print("U4-P0 (J22-19): ");
       Serial.println(sss.settings[i]);
       break;
     case 13:
       Mcp4261_U4.wiper1(sss.settings[i]);
-      Serial.print("U4-P1 (J24-16): ");
+      Serial.print("U4-P1 (J22-20): ");
       Serial.println(sss.settings[i]);
       break;
     case 14:
       Mcp4261_U4.wiper2(sss.settings[i]);
-      Serial.print("U4-P2 (J24-17): ");
+      Serial.print("U4-P2 (J22-21): ");
       Serial.println(sss.settings[i]);
       break;
     case 15:
       Mcp4261_U4.wiper3(sss.settings[i]);
-      Serial.print("U4-P3 (J24-18): ");
+      Serial.print("U4-P3 (J22-22): ");
       Serial.println(sss.settings[i]);
       break;
     case 16:
       Mcp4261_U5.wiper0(sss.settings[i]);
-      Serial.print("U5-P0 (J10-7): ");
+      Serial.print("U5-P0 (J12-12): ");
       Serial.println(sss.settings[i]);
       break;
     case 17:
       Mcp4261_U5.wiper1(sss.settings[i]);
-      Serial.print("U5-P1 (J24-9): ");
+      Serial.print("U5-P1 (J12-11): ");
       Serial.println(sss.settings[i]);
       break;
     case 18:
       Mcp4261_U5.wiper2(sss.settings[i]);
-      Serial.print("U5-P2 (J24-10): ");
+      Serial.print("U5-P2 (J12-10): ");
       Serial.println(sss.settings[i]);
       break;
     case 19:
       Mcp4261_U5.wiper3(sss.settings[i]);
-      Serial.print("U5-P3 (J24-14): ");
+      Serial.print("U5-P3 (J12-9): ");
       Serial.println(sss.settings[i]);
       break;
     case 20:
       setDAC();
-      Serial.print("VoutA (J24-19): ");
+      Serial.print("VoutA (J22-12): ");
       Serial.println(sss.settings[i]);
       break;
     case 21:
       setDAC();
-      Serial.print("VoutB (J24-20): ");
+      Serial.print("VoutB (J22-13): ");
       Serial.println(sss.settings[i]);
       break;
     case 22:
       setDAC();
-      Serial.print("VoutC (J24-21): ");
+      Serial.print("VoutC (J22- 1): ");
       Serial.println(sss.settings[i]);
       break;
     case 23:
       setDAC();
-      Serial.print("VoutD (J24-22): ");
+      Serial.print("VoutD (J22- 2): ");
       Serial.println(sss.settings[i]);
       break;
-    case 24:// Only on rev 9 and 8 boards
+    case 24:
       pwm_1 = map(sss.settings[i],0,100,0,255);
-      analogWrite(PWMPin1,pwm_1); //192 = 3.70 volts on PWM1
-      Serial.print("PWM1 (J24-23): ");
+      analogWrite(PWM1Pin,pwm_1); //192 = 3.70 volts on PWM1
+      Serial.print("PWM1 (J20-1): ");
       Serial.println(sss.settings[i]);
       break;
     case 25:
-      //pwm_2 = map(sss.settings[i],0,100,0,255);
-      //analogWrite(PWMPin2,pwm_2); //192 = 3.70 volts on PWM1
-      Serial.println("PWM2 (Not Connected)");
-      //Serial.println(sss.settings[i]);
+      pwm_2 = map(sss.settings[i],0,100,0,255);
+      analogWrite(PWM2Pin,pwm_2); //192 = 3.70 volts on PWM1
+      Serial.print("PWM2 (J20-2): ");
+      Serial.println(sss.settings[i]);
       break;
     case 26:
-      digitalWrite(J1939Term1Pin,sss.settings[i]);
-      Serial.print("J1939 Term 1: ");
-      Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Terminating Resistor #1 Present");
-      else if (sss.settings[i] == 1) Serial.println(" = No Terminating Resistor");
-      else Serial.println(" Value out of bounds.");
+      pwm_3 = map(sss.settings[i],0,100,0,255);
+      analogWrite(PWM3Pin,pwm_3); //192 = 3.70 volts on PWM1
+      Serial.print("PWM3 (J20-3): ");
+      Serial.println(sss.settings[i]);
       break;
     case 27:
-      digitalWrite(J1939Term2Pin,sss.settings[i]);
-      Serial.print("J1939 Term 2: ");
-      Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Terminating Resistor #2 Present");
-      else if (sss.settings[i] == 1) Serial.println(" = No Terminating Resistor");
-      else Serial.println(" Value out of bounds.");
+      pwm_4 = map(sss.settings[i],0,100,0,255);
+      analogWrite(PWM4Pin,pwm_4); //192 = 3.70 volts on PWM1
+      Serial.print("PWM4 (J20-1): ");
+      Serial.println(sss.settings[i]);
       break;
     case 28:
-      digitalWrite(CAN2Term1Pin,sss.settings[i]);
-      Serial.print("CAN2 Term 1: ");
-      Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Terminating Resistor #1 Present");
-      else if (sss.settings[i] == 1) Serial.println(" = No Terminating Resistor");
-      else Serial.println(" Value out of bounds.");
+      pwm_5 = map(sss.settings[i],0,100,0,255);
+      analogWrite(PWM5Pin,pwm_5); //192 = 3.70 volts on PWM1
+      Serial.print("PWM5 (J20-5): ");
+      Serial.println(sss.settings[i]);
       break;
     case 29:
-      Serial.print("CAN2 Term 2: ");
-      Serial.print(sss.settings[i]);
-      digitalWrite(CAN2Term2Pin,sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Terminating Resistor #2 Present");
-      else if (sss.settings[i] == 1) Serial.println(" = No Terminating Resistor");
-      else Serial.println(" Value out of bounds.");
+      pwm_6 = map(sss.settings[i],0,100,0,255);
+      analogWrite(PWM6Pin,pwm_6); //192 = 3.70 volts on PWM1
+      Serial.print("PWM6 (J20-6): ");
+      Serial.println(sss.settings[i]);
       break;
     case 30:
-      digitalWrite(CAN3Term1Pin,sss.settings[i]);
-      Serial.print("CAN3 Term 1: ");
-      Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Terminating Resistor #1 Present");
-      else if (sss.settings[i] == 1) Serial.println(" = No Terminating Resistor");
-      else Serial.println(" Value out of bounds.");
+      pwm_7 = map(sss.settings[i],0,100,0,255);
+      analogWrite(PWM7Pin,pwm_7); //192 = 3.70 volts on PWM1
+      Serial.print("PWM7 (J20-7): ");
+      Serial.println(sss.settings[i]);
       break;
     case 31:
-      digitalWrite(CAN3Term2Pin,sss.settings[i]);
-      Serial.print("CAN3 Term 2: ");
-      Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = Terminating Resistor #2 Present");
-      else if (sss.settings[i] == 1) Serial.println(" = No Terminating Resistor");
-      else Serial.println(" Value out of bounds.");
+      pwm_8 = map(sss.settings[i],0,100,0,255);
+      analogWrite(PWM8Pin,pwm_8); //192 = 3.70 volts on PWM1
+      Serial.print("PWM8 (J20-8): ");
+      Serial.println(sss.settings[i]);
       break;
     case 32:
-      digitalWrite(V2WS1SelectPin,sss.settings[i]);
-      Serial.print("V2WS1 (J18-12): ");
+      digitalWrite(J1939Select,sss.settings[i]);
+      Serial.print("J1939: ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Vehicle Sense Return (J18-13)");
-      else if (sss.settings[i] == 1) Serial.println(" = 8 ohms to Vehicle Supply (J18-18)");
+      if (sss.settings[i] == 1) Serial.println(" Connected to CAN4");
+      else if (sss.settings[i] == 0) Serial.println("Not Connected");
       else Serial.println(" Value out of bounds.");
       break;
     case 33:
-      digitalWrite(V2WS2SelectPin,sss.settings[i]);
-      Serial.print("V2WS2 (J18-8): ");
+      digitalWrite(CAN4Term1Pin,sss.settings[i]);
+      Serial.print("CAN4 Termination Resistor 1: ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Vehicle Sense Return (J18-13)");
-      else if (sss.settings[i] == 1) Serial.println(" = 8 ohms to Vehicle Supply (J18-18)");
+      if (sss.settings[i] == 0) Serial.println(" = Connected to 120 ohms");
+      else if (sss.settings[i] == 1) Serial.println(" = Not Connected");
       else Serial.println(" Value out of bounds.");
       break;
     case 34:
-      digitalWrite(E2WS1SelectPin,sss.settings[i]);
-      Serial.print("E2WS1 (J24-5): ");
+      digitalWrite(CAN4Term2Pin,sss.settings[i]);
+      Serial.print("CAN4 Termination Resistor 2: ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
-      else if (sss.settings[i] == 1 ) Serial.println(" = 10 ohms to +12V Engine Supply (J24-13)");
+      if (sss.settings[i] == 0) Serial.println(" = Connected to 120 ohms");
+      else if (sss.settings[i] == 1 ) Serial.println(" = Not Connected");
       else Serial.println(" Value out of bounds.");
       break;
     case 35:
-      digitalWrite(E2WS2SelectPin,sss.settings[i]);
-      Serial.print("E2WS2 (J24-6): ");
+      digitalWrite(Coil5Control,sss.settings[i]);
+      Serial.print("Coil 5 (J12- 3): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
-      else if (sss.settings[i] == 1) Serial.println(" = 10 ohms to +12V Engine Supply (J24-13)");
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
     case 36:
-      digitalWrite(E2WS3SelectPin,sss.settings[i]);
-      Serial.print("E2WS3 (J24-7): ");
+      digitalWrite(Coil6Control,sss.settings[i]);
+      Serial.print("Coil 6 (J12- 4): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
-      else if (sss.settings[i] == 1) Serial.println(" = 10 ohms to +12V Engine Supply (J24-13)");
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
     case 37:
-      digitalWrite(E2WS4SelectPin,sss.settings[i]);
-      Serial.print("E2WS4 (J24-8): ");
+      digitalWrite(Coil7Control,sss.settings[i]);
+      Serial.print("Coil 7 Control (J12- 5): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
-      else if (sss.settings[i] == 1) Serial.println(" = 10 ohms to +12V Engine Supply");
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
     case 38:
@@ -1051,40 +1052,40 @@ void adjustSetting(int i)
       else Serial.println(" Value out of bounds.");
       break;
     case 78:
-      digitalWrite(CAN2FrontEnablePin,sss.settings[i]);
-      Serial.print("CAN2 Panel Enable: ");
+      digitalWrite(Coil8Control,sss.settings[i]);
+      Serial.print("Coil 8 (J12- 6): ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 1) Serial.println(" = Not Connected");
-      else if (sss.settings[i] == 0) Serial.println(" = CAN2 on Front Panel Connected");
+      if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
     case 79:
       digitalWrite(Coil1Control,sss.settings[i]);
-      Serial.print("Coil 1 Control (J16-16): ");
+      Serial.print("Coil 1 Control (J20-12): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
-      else if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
     case 80:
       digitalWrite(Coil2Control,sss.settings[i]);
-      Serial.print("Coil 2 Control (J16-15): ");
+      Serial.print("Coil 2 Control (J20-11): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
-      else if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
     case 81:
       digitalWrite(Coil3Control,sss.settings[i]);
-      Serial.print("Coil 3 Control (J16-14): ");
+      Serial.print("Coil 3 Control (J22- 6): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
-      else if (sss.settings[i] == 0) Serial.println(" = 210 ohms to Ground");
+      else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
     case 82:
       digitalWrite(Coil4Control,sss.settings[i]);
-      Serial.print("Coil 4 Control (J24-24): ");
+      Serial.print("Coil 4 Control (J22-10): ");
       Serial.print(sss.settings[i]);
       if (sss.settings[i] == 1) Serial.println(" = 10 ohms to 12V");
       else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
@@ -1094,7 +1095,7 @@ void adjustSetting(int i)
 }  
 
 void setDAC(){  //Settings are in millivolts.
-  digitalWrite(LDACPin,LOW);
+  //digitalWrite(LDACPin,LOW);
   for (int j=20; j<24; j++)
   {
     if (sss.settings[j]>5000) sss.settings[j]=5000;
@@ -1111,7 +1112,7 @@ void setDAC(){  //Settings are in millivolts.
   VoutC = constrain(VoutC,0,4095);
   VoutD = constrain(VoutD,0,4095);
   
-  Wire.beginTransmission(DACAddress);
+  Wire.beginTransmission(daughterDACAddress);
   Wire.write(byte(0x50));             
   Wire.write(highByte(VoutA));             
   Wire.write(lowByte(VoutA));             
@@ -1129,5 +1130,5 @@ void setDAC(){  //Settings are in millivolts.
     Serial.println(flag); 
   }
   delay(10);
-  digitalWrite(LDACPin,HIGH);
+  //digitalWrite(LDACPin,HIGH);
 }
