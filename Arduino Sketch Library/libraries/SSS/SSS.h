@@ -34,7 +34,7 @@ const int CSU5Pin = 40;
  
 const int LDACPin = 41;
 const int DACAddress = 0x61;
-const int daughterDACAddress = 0x62;
+const int daughterDACAddress = 0x60;
 
 
 //Define slave select pins for SPI
@@ -119,8 +119,10 @@ const int PWMPin2 = 9; //PH6
 const int potFullScale = 100;
 const float rAB_ohms = 10000.00; // 10k Ohm
 
+const int numCommands = 83;
 
 void setDAC();
+void setDaughterDAC();
 void setPinModes();
 void adjustSetting(int i);
 
@@ -148,7 +150,7 @@ class SSS
     
     char command[100];
     const char separatorChar = ',';
-    int settings[83]; 
+    int settings[87]; 
 
     //declare instances of the CAN class
     MCP_CAN CAN1 = MCP_CAN(6); // Set CS to PH3
@@ -188,7 +190,7 @@ class SSS
     const char decrementChar = '_';
     const char incrementChar = '^';
     const char commandChar = '*';
-    const int numCommands = 83;
+    
     
     boolean validHex;
     boolean displayCAN = false;

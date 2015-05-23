@@ -163,7 +163,8 @@ boolean SSS::isIgnitionOn()
 
 void SSS::sendCANmessages()
 {
-  if (isIgnitionOn() && numCANmsgs >0 ){
+ // if (isIgnitionOn() && numCANmsgs >0 ){
+    if (numCANmsgs >0 ){
     for (int i = 0; i < numCANmsgs; i++){
       unsigned long currentMillis = millis();
       if ((currentMillis - previousCANmillis[i]) > CANtxPeriod[i]) { // Do this on time.
@@ -687,8 +688,8 @@ void adjustSetting(int i)
       digitalWrite(J1939Select,sss.settings[i]);
       Serial.print("J1939: ");
       Serial.print(sss.settings[i]);
-      if (sss.settings[i] == 1) Serial.println(" Connected to CAN4");
-      else if (sss.settings[i] == 0) Serial.println("Not Connected");
+      if (sss.settings[i] == 1) Serial.println(" = Connected to CAN4");
+      else if (sss.settings[i] == 0) Serial.println(" = Not Connected");
       else Serial.println(" Value out of bounds.");
       break;
     case 33:
@@ -1095,8 +1096,7 @@ void adjustSetting(int i)
 }  
 
 void setDAC(){  //Settings are in millivolts.
-  //digitalWrite(LDACPin,LOW);
-  for (int j=20; j<24; j++)
+   for (int j=20; j<24; j++)
   {
     if (sss.settings[j]>5000) sss.settings[j]=5000;
     if (sss.settings[j]<0) sss.settings[j]=0;
@@ -1129,6 +1129,5 @@ void setDAC(){  //Settings are in millivolts.
     Serial.print("Setting DAC over I2C returned error flag of ");
     Serial.println(flag); 
   }
-  delay(10);
-  //digitalWrite(LDACPin,HIGH);
+
 }

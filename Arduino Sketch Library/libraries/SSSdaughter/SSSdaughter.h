@@ -34,8 +34,7 @@ const int CSU5Pin = 80;
  
 const int LDACPin = 41;
 const int DACAddress = 0x61;
-const int daughterDACAddress = 0x62;
-
+const int daughterDACAddress = 0x60;
 
 //Define slave select pins for SPI
 //Set up digital potentiometer pins according to the schematic and pin mapping table

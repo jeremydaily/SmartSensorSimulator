@@ -425,6 +425,10 @@ int SSS::lookupIndex(char c){
     else if (c == '2') return 80;
     else if (c == '3') return 81;
     else if (c == '4') return 82;
+    else if (c == '5') return 83;
+    else if (c == '6') return 84;
+    else if (c == '7') return 85;
+    else if (c == '8') return 86;
 
     else
       return -1;
@@ -494,7 +498,7 @@ SSS sss = SSS(); // Call the Smart Sensor Simulator library.
 
 void adjustSetting(int i)
 {
-  const String decrementCommands[83] = {"q","w","e","r","t","y","u","i","a","s","d","f","g","h","j","k","z","x","c","v","b","n","m","o","p","l","`","<",".",">","/","?","[","{","]","}","\\","|","^q","^w","^e","^r","^t","^y","^u","^i","^a","^s","^d","^f","^g","^h","^j","^k","^z","^x","^c","^v","_q","_w","_e","_r","_t","_y","_u","_i","_a","_s","_d","_f","_g","_h","_j","_k","_z","_x","_c","_v","=","1","2","3","4"};
+  const String decrementCommands[87] = {"q","w","e","r","t","y","u","i","a","s","d","f","g","h","j","k","z","x","c","v","b","n","m","o","p","l","`","<",".",">","/","?","[","{","]","}","\\","|","^q","^w","^e","^r","^t","^y","^u","^i","^a","^s","^d","^f","^g","^h","^j","^k","^z","^x","^c","^v","_q","_w","_e","_r","_t","_y","_u","_i","_a","_s","_d","_f","_g","_h","_j","_k","_z","_x","_c","_v","=","1","2","3","4","5","6","7","8"};
   
   Serial.print(i);
   Serial.print(" ");
@@ -1090,6 +1094,26 @@ void adjustSetting(int i)
       else if (sss.settings[i] == 0) Serial.println(" = 10 ohms to Ground");
       else Serial.println(" Value out of bounds.");
       break;
+    case 83:
+      setDaughterDAC();
+      Serial.print("Daughter VoutA (J22-12): ");
+      Serial.println(sss.settings[i]);
+      break;
+    case 84:
+      setDaughterDAC();
+      Serial.print("Daughter VoutB (J22-11): ");
+      Serial.println(sss.settings[i]);
+      break;
+    case 85:
+      setDaughterDAC();
+      Serial.print("Daughter VoutC (J22-1): ");
+      Serial.println(sss.settings[i]);
+      break;
+    case 86:
+      setDaughterDAC();
+      Serial.print("Daughter VoutD (J22-2): ");
+      Serial.println(sss.settings[i]);
+      break;
   }
 }  
 
@@ -1130,4 +1154,43 @@ void setDAC(){  //Settings are in millivolts.
   }
   delay(10);
   digitalWrite(LDACPin,HIGH);
+}
+
+void setDaughterDAC(){  //Settings are in millivolts.
+  //digitalWrite(LDACPin,LOW);
+  for (int j=83; j<87; j++)
+  {
+    if (sss.settings[j]>5000) sss.settings[j]=5000;
+    if (sss.settings[j]<0) sss.settings[j]=0;
+  }
+    
+  int VoutA = map(sss.settings[83],0,3606,0,3000); //0x0BBB or 3003 = 3.616V on VoutA
+  int VoutB = map(sss.settings[84],0,3606,0,3000); //0x06BB or 1721 = 2.074V on VoutB
+  int VoutC = map(sss.settings[85],0,3606,0,3000); //0x08BB = 2.682V on VoutC
+  int VoutD = map(sss.settings[86],0,3606,0,3000); //0x0ABB = 3.298V on VoutD
+
+  VoutA = constrain(VoutA,0,4095);
+  VoutB = constrain(VoutB,0,4095);
+  VoutC = constrain(VoutC,0,4095);
+  VoutD = constrain(VoutD,0,4095);
+  
+  Wire.beginTransmission(daughterDACAddress);
+  Wire.write(byte(0x50));             
+  Wire.write(highByte(VoutA));             
+  Wire.write(lowByte(VoutA));             
+  Wire.write(highByte(VoutB));             
+  Wire.write(lowByte(VoutB));             
+  Wire.write(highByte(VoutC));             
+  Wire.write(lowByte(VoutC));             
+  Wire.write(highByte(VoutD));             
+  Wire.write(lowByte(VoutD));             
+  int flag = Wire.endTransmission(); 
+
+  if (flag != 0) 
+  {
+    Serial.print("Setting DAC over I2C returned error flag of ");
+    Serial.println(flag); 
+  }
+  
+  //digitalWrite(LDACPin,HIGH);
 }
