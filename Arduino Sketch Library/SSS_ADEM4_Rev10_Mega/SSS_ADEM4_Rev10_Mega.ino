@@ -121,6 +121,9 @@ void setup()
   sss.settings[81] = 0; //Coil 3 (J16-14):
   sss.settings[82] = 0; //Coil 4 (J24-24): P2-70, CGI Temperature, Yellow/Black
   
+  
+  
+  
   Serial.begin(115200); // Serial to the USB to UART bridge
   Serial.println("Starting Up...");
   Serial.println("Synercon Technologies Smart Sensor Simulator");
@@ -172,7 +175,8 @@ void setup()
   
   IDstring.toCharArray(sss.compID,29); // Convert the component ID to a character array for CAN
 
-  for (int h = 0; h<83; h++) adjustSetting(h);
+  for (int h = 0; h<numCommands; h++) adjustSetting(h);
+  Serial.println("Main Board Program for ATmega2560 Processor.");
   Serial.println("Finished Starting Up... Type a command:");
   
 }
