@@ -41,6 +41,14 @@ Last used on SSS-ADEM4-1R90004
 #include <SPI.h>
 #include <Mcp4261.h>
 
+String IDstring = "SYNER*SSS-ADEM4*1R90010     "; //Change this to match the case of the SSS you are programming. Be sure to include trailing spaces.
+
+char compID[29];
+byte buf[8];
+byte rxBuf[8];
+unsigned long rxId;
+byte len = 0;
+
 const long accelCalibrationDelay = 30000;
 
 const int numCommands = 79;
@@ -484,24 +492,16 @@ void loop(){
     } // end for
   } // end if
    
-  // Set a timestamp when the igition turned on the first time. Once ignition is on, resetting the starTime stops
-  if (!ignition) startTime = currentMillis;
-   
-  if (runOnce && currentMillis-startTime > accelCalibrationDelay) {
-    runOnce = !runOnce;
-    //AccelCalibtration();
-      }
+//  // Set a timestamp when the igition turned on the first time. Once ignition is on, resetting the starTime stops
+//  if (!ignition) startTime = currentMillis;
+//   
+//  if (runOnce && currentMillis-startTime > accelCalibrationDelay) {
+//    runOnce = !runOnce;
+//    //AccelCalibtration();
+//      }
   
   
-  if(CAN1Received){
-    CAN1Received = false;
-    //processCAN1message();
-  }
-  
-  if(CAN3Received){
-    CAN3Received = false;
-    //processCAN3message();
-  }
+  processCAN1message()
   
 } //end loop()
 
@@ -1451,4 +1451,36 @@ void AccelCalibtration(){
 
 void printHelp(){
   Serial.println("This is a helper message:");
+}
+
+
+void processCAN1message(){
+  CAN1.readMsgBuf(&len, rxBuf);              // Read data: len = data length, buf = data byte(s)
+    rxId = CAN1.getCanId();                    // Get message ID
+    if ((rxId & 0x00FF0000) == 0x00EA0000){
+        //Serial.print("Request ");
+        if (rxBuf[0] == 0xEB && rxBuf[1] == 0xFE) sendComponentInfo(compID);
+    }
+}
+
+void sendComponentInfo(char id[29])
+{
+       Serial.print("Received Request for Component ID. Sending  ");
+       for (int i = 0; i<28;i++) Serial.print(id[i]);
+       Serial.println();
+       byte transport0[8] = {32,28,0,4,0xFF,0xEB,0xFE,0};
+       byte transport1[8] = {1,id[0],id[1],id[2],id[3],id[4],id[5],id[6]};
+       byte transport2[8] = {2,id[7],id[8],id[9],id[10],id[11],id[12],id[13]};
+       byte transport3[8] = {3,id[14],id[15],id[16],id[17],id[18],id[19],id[20]};
+       byte transport4[8] = {4,id[21],id[22],id[23],id[24],id[25],id[26],id[27]};
+       CAN1.sendMsgBuf(0x1CECFF0B, 1, 8, transport0);
+       delay(3);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport1);
+       delay(3);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport2);
+       delay(2);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport3);
+       delay(2);
+       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport4);
+       
 }
