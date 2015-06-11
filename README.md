@@ -1,14 +1,18 @@
-Setting up the Synercon SSS toolchain on Window 7-64
-1. Download and install Arduino 1.6 IDE
+#Setting up the Synercon SSS toolchain on Windows 7
+1. Download and install the Arduino IDE (1.6)
+
 http://arduino.cc/download_handler.php?f=/arduino-1.6.3-windows.exe
+
 A copy is also available in the Arduino Tools directory.
+
 2. Download the latest version of AVRDUDE to enable burning the boot loader with the AVR ISP mkII
 http://download.savannah.gnu.org/releases/avrdude/avrdude-6.1-mingw32.zip
-2.1. Copy the contents in the AVRDUDE zip file to C:\Users\XXXXXXX\AppData\Roaming\Arduino15\packages\arduino\tools\avrdude\6.0.1-arduino3\bin
-3. Set the Arduino preferences to point to your Arduino Library.
-3.1 Download the SSS Libraries from https://github.com/SynerconTechnologies/SmartSensorSimulator/Arduino
-3.2 Extract the library source to a known location. For example: C:\Users\jeremy-daily.UTULSA\Documents\GitHub\SmartSensorSimulator\Arduino
-3.3 Point the Arduino IDE library search path to the location in which you just saved the SSS libaries. Example: C:\Users\jeremy-daily.UTULSA\Documents\GitHub\SmartSensorSimulator\Arduino
+This is also available in this repository.
+2.1. Copy avrdude.exe from the AVRDUDE zip file to C:\Program Files (x86)\Arduino\hardware\tools\avr\bin
+2.2. Copy avrdude.conf from the AVRDUDE zip file to C:\Program Files (x86)\Arduino\hardware\tools\avr\etc
+3. Clone or download this repository and remember where you save it. Set the Arduino preferences to point to your Arduino Library.
+
+3. Point the Arduino IDE library search path to the location in which you just saved the SSS libaries. Example: C:\Users\jeremy-daily.UTULSA\Documents\GitHub\SmartSensorSimulator\Arduino Sketch Library
 4. Run the installer in avrispmkii_libusb-win32_1.2.1.0.zip
 http://mightyohm.com/blog/wp-content/uploads/2010/09/avrispmkii_libusb-win32_1.2.1.0.zip
 5. Install the cypress USB to UART Drivers. http://www.cypress.com/?rID=63794 

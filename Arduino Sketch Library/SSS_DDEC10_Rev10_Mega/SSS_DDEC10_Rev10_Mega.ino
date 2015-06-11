@@ -21,23 +21,23 @@ void setup()
  
   //setting[??] = value //Schematic Port Name (PCB Pin Number): Connector Pin Number, Wire Application, Wire Color, Fault Cleared  
   sss.settings[0] = 26;  //q U1-P0W (J16-9): MCM120-87, Intake Manifold Charge air pressure, Purple/White
-  sss.settings[1] = 50;  //w U1-P1W (J16-10): MCM120-109, Differential pressure EGR Yellow/White
-  sss.settings[2] = 15;  //e U1-P2W (J16-11): MCM120-110, Engine Coolant Outlet Temperature, Grey/Black, Fault 110
+  sss.settings[1] = 15;  //w U1-P1W (J16-10): MCM120-109, Differential pressure EGR Yellow/White
+  sss.settings[2] = 20;  //e U1-P2W (J16-11): MCM120-110, Engine Coolant Outlet Temperature, Grey/Black, Fault 110
   sss.settings[3] = 10;  //r U1-P3W (J16-13): MCM120-57, Water level for fuel water separator, Grey
   sss.settings[4] = 60;  //t U2-P0W (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
   sss.settings[5] = 55;  //y U2-P1W (J18-3): CPC3-5, Multifunction, Grey/White, Open 
   sss.settings[6] = 0;   //u U2-P2W (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
-  sss.settings[7] = 0;   //i U2-P3W (J18-7): CPC1-1, Multifunction, Brown, Open circuit
+  sss.settings[7] = 50;  //i U2-P3W (J18-7): CPC1-1, Multifunction, Brown, Open circuit
   sss.settings[8] = 50;  //a U3-P0W (J10-4): CPC4-15, Multiple application, Tan/White
-  sss.settings[9] = 30;  //s U3-P1W (J10-9): CPC3-15, Ambient Air Temperature Sensor, Pink/White
+  sss.settings[9] = 20;  //s U3-P1W (J10-9): CPC3-15, Ambient Air Temperature Sensor, Pink/White
   sss.settings[10] = 70; //d U3-P2W (J10-5): CPC4-16, Multiple applications, Tan
   sss.settings[11] = 0;  //f U3-P3W (J10-10): CPC3-11, Low Coolant Level Sensor, Orange/White
-  sss.settings[12] = 95; //g U4-P0W (J24-15): MCM120-84, HC doser fuel compensation pressure in, Orange/White
-  sss.settings[13] = 50; //h U4-P1W (J24-16): MCM120-80, Coolant inlet temperature, Blue/White
-  sss.settings[14] = 50; //j U4-P2W (J24-17): MCM120-111, HC doser fuel line pressure out, Pink/Black
-  sss.settings[15] = 50; //k U4-P3W (J24-18): MCM120-119, Charge air temperature, Blue/Black
+  sss.settings[12] = 10; //g U4-P0W (J24-15): MCM120-84, HC doser fuel compensation pressure in, Orange/White
+  sss.settings[13] = 20; //h U4-P1W (J24-16): MCM120-80, Coolant inlet temperature, Blue/White
+  sss.settings[14] = 20; //j U4-P2W (J24-17): MCM120-111, HC doser fuel line pressure out, Pink/Black
+  sss.settings[15] = 20; //k U4-P3W (J24-18): MCM120-119, Charge air temperature, Blue/Black
   sss.settings[16] = 0;  //z U5-P0W (J10-7):  CPC1-3, Idle Validation Switch 2 (throttle active), White/Black
-  sss.settings[17] = 50; //x U5-P1W (J24-9):  MCM120-54, Engine Oil Pressure Sensor, Brown/Blue, 
+  sss.settings[17] = 5; //x U5-P1W (J24-9):  MCM120-54, Engine Oil Pressure Sensor, Brown/Blue, 
   sss.settings[18] = 10; //c U5-P2W (J24-10): MCM120-60, EGR Valve Position, Yellow/Blue, 
   sss.settings[19] = 20; //v U5-P3W (J24-14): MCM120-106,Intake manifold temperature, Red/Black
 
@@ -70,57 +70,60 @@ void setup()
   sss.settings[37] = 1; //E2WS4 (J24-8): MCM120-32, Jake Brake Low, White
   
   //For the following switches on the high side of the potentiometer, 0 = connected to +5V, 1 = disconnected.
-  sss.settings[38] = 0; //VccSelectU1-0
-  sss.settings[39] = 0; //VccSelectU1-1
+  sss.settings[38] = 0; //VccSelectU1-0 (J16-9): MCM120-87, Intake Manifold Charge air pressure, Purple/White
+  sss.settings[39] = 0; //VccSelectU1-1 (J16-10): MCM120-109, Differential pressure EGR Yellow/White
   sss.settings[40] = 1; //VccSelectU1-2 (J16-11): MCM120-110, Engine Coolant Outlet Temperature, Grey/Black, Fault 110/3 
   sss.settings[41] = 0; //VccSelectU1-3 (J16-13): MCM120-57, Water level for fuel water separator, Grey
-  sss.settings[42] = 0; //VccSelectU2-0
-  sss.settings[43] = 0; //VccSelectU2-1
-  sss.settings[44] = 0; //VccSelectU2-2
-  sss.settings[45] = 0; //VccSelectU2-3
-  sss.settings[46] = 0; //VccSelectU3-0
-  sss.settings[47] = 1; //VccSelectU3-1
-  sss.settings[48] = 0; //VccSelectU3-2
-  sss.settings[49] = 0; //VccSelectU3-3
-  sss.settings[50] = 0; //VccSelectU4-0
-  sss.settings[51] = 0; //VccSelectU4-1
-  sss.settings[52] = 0; //VccSelectU4-2
-  sss.settings[53] = 0; //VccSelectU4-3
-  sss.settings[54] = 0; //VccSelectU5-0
-  sss.settings[55] = 1; //VccSelectU5-1
-  sss.settings[56] = 1; //VccSelectU5-2
-  sss.settings[57] = 1; //VccSelectU5-3
+  sss.settings[42] = 0; //VccSelectU2-0 (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
+  sss.settings[43] = 1; //VccSelectU2-1 (J18-3): CPC3-5, Multifunction, Grey/White, Open 
+  sss.settings[44] = 0; //VccSelectU2-2 (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
+  sss.settings[45] = 1; //VccSelectU2-3 (J18-7): CPC1-1, Multifunction, Brown, Open circuit
+  sss.settings[46] = 1; //VccSelectU3-0 (J10-4): CPC4-15, Multiple application, Tan/White
+  sss.settings[47] = 1; //VccSelectU3-1 (J10-9): CPC3-15, Ambient Air Temperature Sensor, Pink/White
+  sss.settings[48] = 1; //VccSelectU3-2 (J10-5):  CPC4-16, Multiple applications, Tan
+  sss.settings[49] = 1; //VccSelectU3-3 (J10-10): CPC3-11, Low Coolant Level Sensor, Orange/White
+  sss.settings[50] = 0; //VccSelectU4-0 (J24-15): MCM120-84, HC doser fuel compensation pressure in, Orange/White
+  sss.settings[51] = 1; //VccSelectU4-1 (J24-16): MCM120-80, Coolant inlet temperature, Blue/White
+  sss.settings[52] = 0; //VccSelectU4-2 (J24-17): MCM120-111, HC doser fuel line pressure out, Pink/Black
+  sss.settings[53] = 1; //VccSelectU4-3 (J24-18): MCM120-119, Charge air temperature, Blue/Black
+  sss.settings[54] = 1; //VccSelectU5-0 (J10-7):  CPC1-3, Idle Validation Switch 2 (throttle active), White/Black
+  sss.settings[55] = 0; //VccSelectU5-1 (J24-9):  MCM120-54, Engine Oil Pressure Sensor, Brown/Blue, 
+  sss.settings[56] = 0; //VccSelectU5-2 (J24-10): MCM120-60, EGR Valve Position, Yellow/Blue, 
+  sss.settings[57] = 1; //VccSelectU5-3 (J24-14): MCM120-106, Intake manifold temperature, Red/Black
  
   //For the following switches on the low side of the potentiometer, 0 = connected to ground, 1 = disconnected.
-  sss.settings[58] = 0; //GroundSelectU1-0
-  sss.settings[59] = 0; //GroundSelectU1-1
+  sss.settings[58] = 0; //GroundSelectU1-0 (J16-9): MCM120-87, Intake Manifold Charge air pressure, Purple/White
+  sss.settings[59] = 0; //GroundSelectU1-1 (J16-10): MCM120-109, Differential pressure EGR Yellow/White
   sss.settings[60] = 0; //GroundSelectU1-2 (J16-11): MCM120-110, Engine Coolant Outlet Temperature, Grey/Black, Fault 110/3
   sss.settings[61] = 0; //GroundSelectU1-3 (J16-13): MCM120-57, Water level for fuel water separator, Grey
-  sss.settings[62] = 0; //GroundSelectU2-0
-  sss.settings[63] = 0; //GroundSelectU2-1
-  sss.settings[64] = 0; //GroundSelectU2-2
-  sss.settings[65] = 0; //GroundSelectU2-3
-  sss.settings[66] = 0; //GroundSelectU3-0
-  sss.settings[67] = 0; //GroundSelectU3-1
-  sss.settings[68] = 0; //GroundSelectU3-2
-  sss.settings[69] = 0; //GroundSelectU3-3
-  sss.settings[70] = 1; //GroundSelectU4-0
-  sss.settings[71] = 0; //GroundSelectU4-1
-  sss.settings[72] = 0; //GroundSelectU4-2
-  sss.settings[73] = 0; //GroundSelectU4-3
-  sss.settings[74] = 0; //GroundSelectU5-0
-  sss.settings[75] = 1; //GroundSelectU5-1
-  sss.settings[76] = 0; //GroundSelectU5-2
-  sss.settings[77] = 0; //GroundSelectU5-3
+  sss.settings[62] = 0; //GroundSelectU2-0 (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
+  sss.settings[63] = 0; //GroundSelectU2-1 (J18-3): CPC3-5, Multifunction, Grey/White, Open 
+  sss.settings[64] = 0; //GroundSelectU2-2 (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
+  sss.settings[65] = 0; //GroundSelectU2-3 (J18-7): CPC1-1, Multifunction, Brown, Open circuit
+  sss.settings[66] = 0; //GroundSelectU3-0 (J10-4): CPC4-15, Multiple application, Tan/White
+  sss.settings[67] = 0; //GroundSelectU3-1 (J10-9): CPC3-15, Ambient Air Temperature Sensor, Pink/White
+  sss.settings[68] = 0; //GroundSelectU3-2 (J10-5): CPC4-16, Multiple applications, Tan
+  sss.settings[69] = 0; //GroundSelectU3-3 (J10-10): CPC3-11, Low Coolant Level Sensor, Orange/White
+  sss.settings[70] = 0; //GroundSelectU4-0 (J24-15): MCM120-84, HC doser fuel compensation pressure in, Orange/White
+  sss.settings[71] = 0; //GroundSelectU4-1 (J24-16): MCM120-80, Coolant inlet temperature, Blue/White
+  sss.settings[72] = 0; //GroundSelectU4-2 (J24-17): MCM120-111, HC doser fuel line pressure out, Pink/Black
+  sss.settings[73] = 0; //GroundSelectU4-3 (J24-18): MCM120-119, Charge air temperature, Blue/Black
+  sss.settings[74] = 0; //GroundSelectU5-0 (J10-7):  CPC1-3, Idle Validation Switch 2 (throttle active), White/Black
+  sss.settings[75] = 0; //GroundSelectU5-1 (J24-9):  MCM120-54, Engine Oil Pressure Sensor, Brown/Blue, 
+  sss.settings[76] = 0; //GroundSelectU5-2 (J24-10): MCM120-60, EGR Valve Position, Yellow/Blue, 
+  sss.settings[77] = 0; //GroundSelectU5-3 (J24-14): MCM120-106, Intake manifold temperature, Red/Black
   
   //CAN2 Panel Select - 0 = CAN2 on 9-pin is connected to E-CAN, 1 = disconnected
   sss.settings[78] = 0; //CAN2 pn 9 pin connector
   
   // For the following switches 1 = pull high to +12V through 10 ohms and 0 = Pulled Down.
-  sss.settings[79] = 1; //Coil 1 (J16-16): 
+  sss.settings[79] = 1; //Coil 1 (J16-16): MCM120-37, Variable Speed Water Pump, Tan/Black 
   sss.settings[80] = 1; //Coil 2 (J16-15): MCM120-35, Turbocharger control, Purple/Blue
   sss.settings[81] = 1; //Coil 3 (J16-14): MCM120-33, Two-speed Fan or Variable-speed Fan, Tan
   sss.settings[82] = 1; //Coil 4 (J24-24): MCM120-61, EGR Valve, Pink/Blue
+  
+ 
+  
   
   Serial.begin(115200); // Serial to the USB to UART bridge
   Serial.println("Starting Up...");
@@ -173,7 +176,7 @@ void setup()
   
   IDstring.toCharArray(sss.compID,29); // Convert the component ID to a character array for CAN
 
-  for (int h = 0; h<83; h++) adjustSetting(h);
+  for (int h = 0; h<numCommands; h++) adjustSetting(h);
   Serial.println("Main Board Program for ATmega2560 Processor.");
   Serial.println("Finished Starting Up... Type a command:");
   
