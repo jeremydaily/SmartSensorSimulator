@@ -38,7 +38,7 @@ the first nibble of the CAN message tells the SSS where to put the message.
 #include <Mcp4261.h>
 #include <SSS.h>
 
-String IDstring = "SYNER*SSS-ADEM4*1R90003     ";// this string must contain XX characters
+String IDstring = "SYNER*SSS-ADEM4*1R90007     ";// this string must contain XX characters
 
 void setup()
 { 
@@ -80,7 +80,8 @@ void setup()
   
   //The following settings are in duty cycle, so 50 = 2.5V average
   sss.settings[24] = 50; //PWM1, J24-23, P2-16, CGI Delta Pressure, Purple
-  sss.settings[25] = 35; //PWM2,    (Not Connected on Rev 10. May need to move to E2WS1)
+  sss.settings[25] = 50
+  ; //PWM2,    (Not Connected on Rev 10. May need to move to E2WS1)
     
   // for the following switch settings 0 = connected (closed) and 1 = disconnected (open).
   // These are normally closed switches. Uses 120 ohm resistor
