@@ -23,7 +23,10 @@ int pwm_6;
 int pwm_7;
 int pwm_8;
 
-
+//declare instances of the CAN class
+MCP_CAN CAN4 = MCP_CAN(53); // 
+    
+  
 void setPinModes()
 {   
     //Initialize the SPI chip pins
@@ -145,15 +148,38 @@ void setPinModes()
 }
 
 
+void setupSerial(){
+    // Set up Serial Connections
+    Serial.begin(57600); // Serial to the USB to UART bridge
+    Serial.println("Starting Up...");
+    Serial.println("Synercon Technologies Smart Sensor Simulator");
+    Serial.println("Program running for the ATmega2560 Processor on the daughterboard.");
+
+    
+
+    Serial.println("Setting up CAN4..."); //J1939
+    if(CAN4.begin(CAN_250KBPS) == CAN_OK) Serial.println("CAN4 init ok!!");
+    else Serial.println("CAN0 init fail!!");
+    
+    Serial2.begin(9600); //J1708 
+}
 
 
-SSS::SSS()
-{
+SSS::SSS(){
+}
+
+void SSS::begin(){
+    Wire.begin();
+    setupSerial();
     setPinModes();
     displayCAN = false;
-    Wire.begin();
-   
-  
+    
+    separatorChar = ',';
+    numCommands = 83;
+    numCANmsgs = 0;
+    displayCAN = false;
+    len = 0;
+    _ignitionPin = 5;
 } 
 
 boolean SSS::isIgnitionOn()
@@ -176,14 +202,6 @@ void SSS::sendCANmessages()
 }
 
 
-/* void SSS::processCAN1message(){
-    CAN4.readMsgBuf(&len, _rxBuf);              // Read data: len = data length, buf = data byte(s)
-    rxId = CAN1.getCanId();                    // Get message ID
-    if ((rxId & 0x00FF0000) == 0x00EA0000){
-        //Serial.print("Request ");
-        if (_rxBuf[0] == 0xEB && _rxBuf[1] == 0xFE) sendComponentInfo(compID);
-    }
-} */
 
 void SSS::processCAN4message(){
  Serial.print("CAN3 RX, ");
@@ -218,7 +236,6 @@ void SSS::processCommand(int numDataBytes)
   
   //help text
   else if (command[0] == 'h' && command[1] == 'e') printHelp();
-  
   
   //reset can message count
   else if (command[0] == 'r' && command[1] == 'e' ){
@@ -312,6 +329,16 @@ void SSS::processCommand(int numDataBytes)
         for (int f=0;f<6;f++) value[f] = 0x00;
         for (int w=4;w<numDataBytes;w++) value[w-4] = command[w];
         settings[g]=atoi(value);
+        
+        if (g>19 && g<24){
+          if (settings[g] > 5000) settings[g]=5000;
+          if (settings[g] < 0) settings[g]=0;
+        } 
+        else {
+            if (settings[g] > 100) settings[g]=100;
+            if (settings[g] < 0 ) settings[g]=0;
+        }
+        
         adjustSetting(g);
       }
 

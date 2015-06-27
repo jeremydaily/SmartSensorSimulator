@@ -33,8 +33,7 @@ const int CSU4Pin = 38;
 const int CSU5Pin = 80;
  
 const int LDACPin = 41;
-const int DACAddress = 0x61;
-const int daughterDACAddress = 0x62;
+const int daughterDACAddress = 0x60;
 
 
 //Define slave select pins for SPI
@@ -122,14 +121,20 @@ const float rAB_ohms = 10000.00; // 10k Ohm
 
 void setDAC();
 void setPinModes();
+void setupSerial();
 void adjustSetting(int i);
 
+//declare constants
+const char decrementChar = '_';
+const char incrementChar = '^';
+const char commandChar = '*';
+const int numCommands = 83;
 
 class SSS
 {
   public:
     SSS();
-    
+    void begin();
     //declare functions
     void processCommand(int numDataBytes);
     boolean isIgnitionOn();
@@ -141,57 +146,47 @@ class SSS
     void processCAN4message();    
    
     
-    
+    String IDstring;
+     
     char compID[29];
     
     
     char command[100];
-    const char separatorChar = ',';
+    char separatorChar;
     int settings[83]; 
 
-    //declare instances of the CAN class
-    MCP_CAN CAN4 = MCP_CAN(53); // 
-    
-      
-    
-    
-  
-  
-  private:    
+    int numCommands;
+   
     
     //declare character or byte arrays (bytes are unsigned chars)
     char value[6];
     byte CANchannel[100];
     byte CANmessages[50][8];
-    int numCANmsgs = 0;
+    int numCANmsgs;
     int CANtxPeriod[100];
     int periodNumber;
     
     //The following are characters to be converted into numbers. These come from serial commands.
-    char ID[9] ={0,0,0,0,0,0,0,0,0};
-    char period[5] ={0,0,0,0,0};
-    char data1[9]={0,0,0,0,0,0,0,0,0};
-    char data2[9]={0,0,0,0,0,0,0,0,0};
-    char CANmessage[14] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+    char ID[9];
+    char period[5];
+    char data1[9];
+    char data2[9];
+    char CANmessage[14];
     byte buf[8];
     byte _rxBuf[8];
     unsigned long CANIDs[100];
     unsigned long previousCANmillis[100];
-    unsigned long IDnumber = 0;
+    unsigned long IDnumber;
     unsigned long rxId;
-    byte len = 0;
+    byte len;
  
     
-    //declare constants
-    const char decrementChar = '_';
-    const char incrementChar = '^';
-    const char commandChar = '*';
-    const int numCommands = 83;
+    
     
     boolean validHex;
-    boolean displayCAN = false;
+    boolean displayCAN;
     
-    const int _ignitionPin = 5;
+    int _ignitionPin;
 
 
 };

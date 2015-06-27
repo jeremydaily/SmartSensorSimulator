@@ -2,17 +2,21 @@
   SSS.cpp - Library for programming the Smart Sensor Simulator.
 */
 #include "Arduino.h"
-#include "mcp_can.h"
 #include "SPI.h"
+#include "mcp_can.h"
 #include "Mcp4261.h"
 #include "SSS.h"
 #include "Wire.h"
 
-MCP4261 Mcp4261_U1 = MCP4261(  CSU1Pin,  rAB_ohms );
-MCP4261 Mcp4261_U2 = MCP4261(  CSU2Pin,  rAB_ohms );
-MCP4261 Mcp4261_U3 = MCP4261(  CSU3Pin,  rAB_ohms );
-MCP4261 Mcp4261_U4 = MCP4261(  CSU4Pin,  rAB_ohms );
-MCP4261 Mcp4261_U5 = MCP4261(  CSU5Pin,  rAB_ohms );
+MCP4261 Mcp4261_U1 = MCP4261(CSU1Pin, rAB_ohms );
+MCP4261 Mcp4261_U2 = MCP4261(CSU2Pin, rAB_ohms );
+MCP4261 Mcp4261_U3 = MCP4261(CSU3Pin, rAB_ohms );
+MCP4261 Mcp4261_U4 = MCP4261(CSU4Pin, rAB_ohms );
+MCP4261 Mcp4261_U5 = MCP4261(CSU5Pin, rAB_ohms );
+
+MCP_CAN CAN1 = MCP_CAN(6); // Set CS to PH3
+MCP_CAN CAN3 = MCP_CAN(7); // Set CS to PH4
+
 
 int pwm_1;
 int pwm_2; 
@@ -129,18 +133,44 @@ void setPinModes()
  
 }
 
+void setupSerial(){
+    // Set up Serial Connections
+    Serial.begin(115200); // Serial to the USB to UART bridge
+    Serial.println("Starting Up...");
+    Serial.println("Synercon Technologies Smart Sensor Simulator");
+    Serial.println("Program running for the ATmega2560 Processor.");
 
+    
 
+    Serial.println("Setting up CAN1..."); //J1939
+    if(CAN1.begin(CAN_250KBPS) == CAN_OK) Serial.println("CAN1 init ok!!");
+    else Serial.println("CAN0 init fail!!");
+    Serial.println("Setting up CAN3..."); //Used CAN3 in reference to the circuit in the schematics
+    if(CAN3.begin(CAN_250KBPS) == CAN_OK) Serial.println("CAN3 init ok!!");
+    else Serial.println("CAN3 init fail!!");
 
-SSS::SSS()
-{
+    Serial2.begin(9600); //J1708 
+}
+  
+
+SSS::SSS(){
+    //Constructor
+}
+
+void SSS::begin(){
+    Wire.begin();
+    setupSerial();
     setPinModes();
     displayCAN = false;
-    Wire.begin();
-    // Set up Serial Connections
+ 
+    separatorChar = ',';
     
-    Serial2.begin(9600); //J1708 
-  
+
+    numCommands = 83;
+    numCANmsgs = 0;
+    displayCAN = false;
+    len = 0;
+    _ignitionPin = 77;
 } 
 
 boolean SSS::isIgnitionOn()
@@ -299,6 +329,16 @@ void SSS::processCommand(int numDataBytes)
         for (int f=0;f<6;f++) value[f] = 0x00;
         for (int w=4;w<numDataBytes;w++) value[w-4] = command[w];
         settings[g]=atoi(value);
+        
+        if (g>19 && g<24){
+          if (settings[g] > 5000) settings[g]=5000;
+          if (settings[g] < 0) settings[g]=0;
+        } 
+        else {
+            if (settings[g] > 100) settings[g]=100;
+            if (settings[g] < 0 ) settings[g]=0;
+        }
+        
         adjustSetting(g);
       }
 

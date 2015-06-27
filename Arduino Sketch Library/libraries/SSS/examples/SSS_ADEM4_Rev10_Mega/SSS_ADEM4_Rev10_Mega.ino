@@ -12,11 +12,13 @@ Title: Smart Sensor Simulator Firmware for the ATMega2560 Processor on an SSS Re
 #include <SSS.h> // Pin definitions and helper functions
 
 
-String IDstring = "SYNER*SSS-ADEM4*1R90003     "; //Change this to match the case of the SSS you are programming. Be sure to include trailing spaces.
 
 void setup()
 { 
-  
+  sss.begin();
+  sss.IDstring = "SYNER*SSS-ADEM4*1R9000X     "; //Change this to match the case of the SSS you are programming. Be sure to include trailing spaces.
+  sss.IDstring.toCharArray(sss.compID,29); // Convert the component ID to a character array for CAN
+
   //Adjust the settings below to match the particular Smart Sensor Simulator that is being programmed. These settings are interpreted by the adjustSetting(i) function in SSS.cpp
  
   //setting[??] = value //Schematic Port Name (PCB Pin Number): Connector Pin Number, Wire Application, Wire Color, Fault Cleared  
@@ -121,21 +123,6 @@ void setup()
   sss.settings[81] = 0; //Coil 3 (J16-14):
   sss.settings[82] = 0; //Coil 4 (J24-24): P2-70, CGI Temperature, Yellow/Black
   
-  Serial.begin(115200); // Serial to the USB to UART bridge
-  Serial.println("Starting Up...");
-  Serial.println("Synercon Technologies Smart Sensor Simulator");
-  Serial.println(IDstring);
-  Serial.println("Program running for the ATmega2560 Processor.");
- 
-  
-  Serial.println("Setting up CAN1..."); //J1939
-  if(sss.CAN1.begin(CAN_250KBPS) == CAN_OK) Serial.println("CAN1 init ok!!");
-  else Serial.println("CAN0 init fail!!");
-  Serial.println("Setting up CAN3..."); //Used CAN3 in reference to the circuit in the schematics
-  if(sss.CAN3.begin(CAN_250KBPS) == CAN_OK) Serial.println("CAN3 init ok!!");
-  else Serial.println("CAN3 init fail!!");
-  
-  
   //Sample Commands:
   //
   //CAN first ID byte
@@ -166,13 +153,15 @@ void setup()
   //
   //the first nibble of the CAN message tells the SSS where to put the message.  
   //Construct new CAN messages using the format below. Each CAN message needs to have all 3 lines.
+ 
   String commandString = "CAN18FEF52110000000000000000000"; // PGN 65269 Ambient Conditions 1000 = 1 second period
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
   
-  IDstring.toCharArray(sss.compID,29); // Convert the component ID to a character array for CAN
-
-  for (int h = 0; h<83; h++) adjustSetting(h);
+  
+  for (int h = 0; h < sss.numCommands; h++) adjustSetting(h);
+  Serial.println("Main Board Program for ATmega2560 Processor.");
+  Serial.println(sss.IDstring);
   Serial.println("Finished Starting Up... Type a command:");
   
 }
@@ -193,7 +182,9 @@ void loop(){
   //reads to see if component ID is available:
   sss.processCAN1message();
   
+  
 } //end loop()
+
 
 
 
