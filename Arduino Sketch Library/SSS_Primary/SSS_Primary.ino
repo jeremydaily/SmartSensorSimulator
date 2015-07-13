@@ -77,9 +77,9 @@ void setup()
   else Serial.print("CAN0 init fail!!\r\n");
 
 
-//  Serial.println("Setting up CAN1..."); //Engine CAN or CAN2 on the SSS
-//  if(CAN1.begin(CAN_666KBPS) == CAN_OK) Serial.println("CAN1 init ok!!");
-//  else Serial.print("CAN1 init fail!!\r\n");
+  Serial.println("Setting up CAN1..."); //Engine CAN or CAN2 on the SSS
+  if(CAN1.begin(CAN_666KBPS) == CAN_OK) Serial.println("CAN1 init ok!!");
+  else Serial.print("CAN1 init fail!!\r\n");
 }
 
 void loop()
