@@ -100,8 +100,6 @@ class MCP4261
     void wiper_pos(byte pot, unsigned int wiper_pos);
 };
 
-extern  MCP4261 Mcp4261;
-
 #endif // Mcp4261_h
 
 
