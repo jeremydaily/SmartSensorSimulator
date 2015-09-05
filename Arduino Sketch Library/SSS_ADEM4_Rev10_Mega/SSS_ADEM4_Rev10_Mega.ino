@@ -1,6 +1,6 @@
 /*
 Title: Smart Sensor Simulator Firmware for the ATMega2560 Processor on an SSS Rev 10 board
-Comments are for the wiring of an SSS for a DDEC 10.
+Comments are for the wiring of an SSS for a CAT ADEM4.
 */
 
 //Load these libraries
@@ -14,7 +14,7 @@ Comments are for the wiring of an SSS for a DDEC 10.
 void setup()
 { 
   sss.begin();
-  sss.IDstring = "SYNER*SSS-DDECX*1R90004     "; //Change this to match the case of the SSS you are programming. Be sure to include trailing spaces.
+  sss.IDstring = "SYNER*SSS-ADEM4*1R90023     "; //Change this to match the case of the SSS you are programming. Be sure to include trailing spaces.
   sss.IDstring.toCharArray(sss.compID,29); // Convert the component ID to a character array for CAN
 
   //Adjust the settings below to match the particular Smart Sensor Simulator that is being programmed. These settings are interpreted by the adjustSetting(i) function in SSS.cpp

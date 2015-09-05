@@ -23,7 +23,7 @@ void setup()
   sss.settings[1] = 15;  //w U1-P1W (J16-10): MCM120-109, Differential pressure EGR Yellow/White
   sss.settings[2] = 20;  //e U1-P2W (J16-11): MCM120-110, Engine Coolant Outlet Temperature, Grey/Black, Fault 110
   sss.settings[3] = 10;  //r U1-P3W (J16-13): MCM120-57, Water level for fuel water separator, Grey
-  sss.settings[4] = 50;  //t U2-P0W (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
+  sss.settings[4] = 75;  //t U2-P0W (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
   sss.settings[5] = 55;  //y U2-P1W (J18-3): CPC3-5, Multifunction, Grey/White, Open 
   sss.settings[6] = 30;   //u U2-P2W (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
   sss.settings[7] = 50;  //i U2-P3W (J18-7): CPC1-1, Multifunction, Brown, Open circuit
