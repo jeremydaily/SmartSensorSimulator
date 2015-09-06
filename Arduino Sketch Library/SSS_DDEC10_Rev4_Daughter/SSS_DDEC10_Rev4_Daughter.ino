@@ -23,7 +23,7 @@ void setup()
   sss.settings[3] = 10;  //r U1-P3W (J20-16): MCM120-113, Low Side Fuel Pressure (LPPO), Black/Blue, 
   sss.settings[4] = 50;  //t U2-P0W (J20-17): ACM120-84, DEF Pressure Sensor, Brown Blue 
   sss.settings[5] = 55;  //y U2-P1W (J20-18): MCM120-86, Turbo Inlet Temperature, Grey/Blue,
-  sss.settings[6] = 1;   //u U2-P2W (J20-19): MCM120-77, Fuel Temperature, Grey/White, SPN 174^u
+  sss.settings[6] = 20;   //u U2-P2W (J20-19): MCM120-77, Fuel Temperature, Grey/White, SPN 174^u
   sss.settings[7] = 20;  //i U2-P3W (J20-20): ACM120-103, DEF Tank Temperature, Orange Black
   sss.settings[8] = 1;   //a U3-P0W (J22-15): ACM120-27, DOC Outlet Temperature, Purple/White, SPN 3250 
   sss.settings[9] = 30;  //s U3-P1W (J22-16): ACM120-85, DEF Metering Unit temperature, Pink/Black 
