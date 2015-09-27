@@ -14,7 +14,7 @@ Comments are for the wiring of an SSS for a DDEC 10.
 void setup()
 { 
   sss.begin();
-  sss.IDstring = "SYNER*SSS-DDECX*1R90004     "; //Change this to match the case of the SSS you are programming. Be sure to include trailing spaces.
+  sss.IDstring = "SYNER*SSS-PACCAR-MX*1RX0001     "; //Change this to match the case of the SSS you are programming. Be sure to include trailing spaces.
   sss.IDstring.toCharArray(sss.compID,29); // Convert the component ID to a character array for CAN
 
   //Adjust the settings below to match the particular Smart Sensor Simulator that is being programmed. These settings are interpreted by the adjustSetting(i) function in SSS.cpp
@@ -23,9 +23,9 @@ void setup()
   sss.settings[1] = 15;  //w U1-P1W (J16-10): MCM120-109, Differential pressure EGR Yellow/White
   sss.settings[2] = 20;  //e U1-P2W (J16-11): MCM120-110, Engine Coolant Outlet Temperature, Grey/Black, Fault 110
   sss.settings[3] = 10;  //r U1-P3W (J16-13): MCM120-57, Water level for fuel water separator, Grey
-  sss.settings[4] = 40;  //t U2-P0W (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
+  sss.settings[4] = 75;  //t U2-P0W (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
   sss.settings[5] = 55;  //y U2-P1W (J18-3): CPC3-5, Multifunction, Grey/White, Open 
-  sss.settings[6] = 20;   //u U2-P2W (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
+  sss.settings[6] = 30;   //u U2-P2W (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
   sss.settings[7] = 50;  //i U2-P3W (J18-7): CPC1-1, Multifunction, Brown, Open circuit
   sss.settings[8] = 50;  //a U3-P0W (J10-4): CPC4-15, Multiple application, Tan/White
   sss.settings[9] = 20;  //s U3-P1W (J10-9): CPC3-15, Ambient Air Temperature Sensor, Pink/White
