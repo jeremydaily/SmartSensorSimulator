@@ -310,15 +310,15 @@ void loop(){
       //else outByte[4] = -outByte[1] + 188;
 
 //      Serial1.write(outByte[0]);
-      serialSend0Micros = currentMicros+600;
+      serialSend0Micros = currentMicros+500;
       LIN0send = true;
-      serialSend1Micros = currentMicros+1200;
+      serialSend1Micros = currentMicros+1000;
       LIN1send = true;
-      serialSend2Micros = currentMicros+1800;
+      serialSend2Micros = currentMicros+1500;
       LIN2send = true;
-      serialSend3Micros = currentMicros+2400;
+      serialSend3Micros = currentMicros+2000;
       LIN3send = true;
-      serialSend4Micros = currentMicros+3000;
+      serialSend4Micros = currentMicros+2500;
       LIN4send = true;
       
 //      Serial.print("Sent ");
