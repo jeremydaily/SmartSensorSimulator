@@ -62,7 +62,7 @@ void setPinModes()
     digitalWrite(PWM2Pin, LOW);
     digitalWrite(PWM3Pin, LOW);
     digitalWrite(PWM4Pin, LOW);
-    digitalWrite(PWM5Pin, LOW);
+    tone(PWM5Pin, 100);
     digitalWrite(PWM6Pin, LOW);
     digitalWrite(PWM7Pin, LOW);
     digitalWrite(PWM8Pin, LOW);
