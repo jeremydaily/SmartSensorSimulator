@@ -170,17 +170,17 @@ void setup()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 void loop(){
-  //Check for new commands on the serial bus
-  //digitalWrite(PWM5Pin,HIGH);
-  //tone(PWM5Pin,100); //PH4 is arduino pin 6 on the ATmega2560. This is connected to PWM5 Out, which is J20-5 on the 
-  //Rev 4 daughterboard. J20-5 is connected to ACM-95, shiehc is the DEF Pump return signal.
-  currentMillis=millis();
   
+  //PH4 is arduino pin 6 on the ATmega2560. This is connected to PWM5 Out, which is J20-5 on the 
+  //Rev 4 daughterboard. J20-5 is connected to ACM-95, which is the DEF Pump return signal.
+  currentMillis=millis();
   if (currentMillis - previousMillis >=2){
+    previousMillis = currentMillis;
     pumpPinState = !pumpPinState;
     digitalWrite(PWM5Pin,pumpPinState);
   }
-  
+
+  //Check for new commands on the serial bus
   if (Serial.available()>0) 
   {
     int nDataBytes = Serial.readBytesUntil(sss.separatorChar,sss.command,99);
