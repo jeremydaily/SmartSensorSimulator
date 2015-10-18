@@ -40,7 +40,7 @@ void setup()
 
    //The following settings are in milliVolts
   sss.settings[20] = 500; //b Daughter VoutA (J22-12): MCM120-47, Fan Speed, Tan/White 
-  sss.settings[21] = 2500; //n Daughter VoutB (J22-13): ACM120-109, DEF Tank Level, Pink
+  sss.settings[21] = 0000; //n Daughter VoutB (J22-13): ACM120-109, DEF Tank Level, Pink
   sss.settings[22] = 2500; //m Daughter VoutC (J22-1): ACM120-72, DPF pressure out signal, Orange/White
   sss.settings[23] = 2500; //l Daughter VoutD (J22-2): ACM120-100, DEF Pressure signal, Purple/Black
   
