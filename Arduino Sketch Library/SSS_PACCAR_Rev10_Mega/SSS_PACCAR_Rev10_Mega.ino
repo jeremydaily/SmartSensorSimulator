@@ -62,10 +62,10 @@ void setup()
   // For the following switches 1 = pull high to +12V through 10 ohms and 0 = Pulled Down.
   sss.settings[32] = 0; //V2WS1 (J18-12):
   sss.settings[33] = 0; //V2WS2 (J18-8): 
-  sss.settings[34] = 1; //E2WS1 (J24-5): 
-  sss.settings[35] = 1; //E2WS2 (J24-6): 
-  sss.settings[36] = 1; //E2WS3 (J24-7):
-  sss.settings[37] = 1; //E2WS4 (J24-8):
+  sss.settings[34] = 0; //E2WS1 (J24-5): 
+  sss.settings[35] = 0; //E2WS2 (J24-6): 
+  sss.settings[36] = 0; //E2WS3 (J24-7):
+  sss.settings[37] = 0; //E2WS4 (J24-8):
   
   //For the following switches on the high side of the potentiometer, 0 = connected to +5V, 1 = disconnected.
   sss.settings[38] = 0; //VccSelectU1-0 (J16-9): 
@@ -152,19 +152,29 @@ void setup()
   //the first nibble of the CAN message tells the SSS where to put the message.  
   //Construct new CAN messages using the format below. Each CAN message needs to have all 3 lines.
  
-  String commandString = "CAN18FEF52110000000000000000000"; // PGN 65269 Ambient Conditions 1000 = 1 second period
+  
+   
+  String commandString = "CAN18FEF1310100F7FFFF0000001FFF"; //CCVS
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
   
-  commandString = "CAN38FEF13101000000000000000000";
+  commandString = "CAN08FE6E0b00202222222222222222"; //HRW
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
   
-  commandString = "CAN38F0010b01000000000000000000"; //EBC1
+//  commandString = "CAN18FEBF310100CFFFF0FFFFDCFF3F"; //EBC1
+//  commandString.toCharArray(sss.command,32);
+//  sss.processCommand(31);
+//  
+  commandString = "CAN18FEBF0B01000000000000000000"; //EBC2
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
- 
-  commandString = "CAN38FEBF0b01000000000000000000"; //EBC2
+  
+  commandString = "CAN18F0010B005000007D7D7D7DFFFF"; //EBC1
+  commandString.toCharArray(sss.command,32);
+  sss.processCommand(31);
+  
+  commandString = "CAN18F00131005066227D7D7D7DFFFF"; //EBC1
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
   
@@ -172,14 +182,18 @@ void setup()
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
   
+  commandString = "CAN18F0090B00100000000000000000"; //VDC2
+  commandString.toCharArray(sss.command,32);
+  sss.processCommand(31);
+  
   commandString = "CAN38F0233D005000000000000000000"; //A1SCRDSI1
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
-  
+//  
   commandString = "CAN38F0253D00500000000000000000"; //A1SCRA1
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
-  
+//  
   commandString = "CAN38F0245500500000000000000000"; //A1SCRDSR1
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
@@ -191,14 +205,11 @@ void setup()
   commandString = "CAN38FD405505000000000000000000"; //A1SCRDSR2
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
-  
+//  
   commandString = "CAN38FD3C3D10000000000000000000"; //A1SCRRSI1
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
-  
-  commandString = "CAN18F0090B00100000000000000000"; //VDC2
-  commandString.toCharArray(sss.command,32);
-  sss.processCommand(31);
+//  
   
   
   

@@ -62,7 +62,7 @@ void setPinModes()
     digitalWrite(PWM2Pin, LOW);
     digitalWrite(PWM3Pin, LOW);
     digitalWrite(PWM4Pin, LOW);
-    tone(PWM5Pin, 100);
+    digitalWrite(PWM5Pin, LOW);
     digitalWrite(PWM6Pin, LOW);
     digitalWrite(PWM7Pin, LOW);
     digitalWrite(PWM8Pin, LOW);
@@ -157,9 +157,9 @@ void setupSerial(){
 
     
 
-    Serial.println("Setting up CAN4..."); //J1939
-    if(CAN4.begin(CAN_250KBPS) == CAN_OK) Serial.println("CAN4 init ok!!");
-    else Serial.println("CAN0 init fail!!");
+    //Serial.println("Setting up CAN4..."); //J1939
+   // if(CAN4.begin(CAN_500KBPS) == CAN_OK) Serial.println("CAN4 init ok!!");
+   // else Serial.println("CAN0 init fail!!");
     
     Serial2.begin(9600); //J1708 
 }

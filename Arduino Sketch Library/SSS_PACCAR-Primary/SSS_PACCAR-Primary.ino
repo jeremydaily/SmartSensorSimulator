@@ -47,7 +47,9 @@ int i=0;
 
 unsigned char DM1[8] = {0x00,0xFF,0x00,0x00,0x00,0x00,0xFF,0xFF};
 
+unsigned char x18FEF131Message[8] = {0xF7,0xFF,0xFF,0x03,0xCC,0xFF,0xFF,0xFF};
 unsigned char x18FEBF0BMessage[8] = {0x00,0x00,0x7D,0x7D,0x7D,0x7D,0xFF,0xFF};
+unsigned char x18F00131Message[8] = {0xFF,0xFF,0xFF,0x3F,0xFA,0xFF,0xFF,0xFF};
 unsigned char x18F0010BMessage[8] = {0xCF,0xFF,0xF0,0xFF,0xFF,0xDC,0xFF,0x3F};
 unsigned char x18F00E51Message[8] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 unsigned char x18F00F52Message[8] = {0xFF,0xFF,0xFF,0xFF,0xFF,0x7F,0x1F,0x1F};
@@ -170,12 +172,12 @@ if (relayState){
         
               
         //CAN0.sendMsgBuf(0x18F00131, 1, 8, stmp); //Electronic Brake Controller from SA=49
-        CAN0.sendMsgBuf(0x18F0010B, 1, 8, x18F0010BMessage); //Electronic Brake Controller from SA=11
-        CAN0.sendMsgBuf(0x18F00131, 1, 8, x18F0010BMessage); //Electronic Brake Controller from SA=49
-        CAN0.sendMsgBuf(0x18FEBF0B, 1, 8, x18FEBF0BMessage); //Electronic Brake Controller from SA=11
+        CAN1.sendMsgBuf(0x18F0010B, 1, 8, x18F0010BMessage); //Electronic Brake Controller from SA=11
+        CAN1.sendMsgBuf(0x18F00131, 1, 8, x18F00131Message); //Electronic Brake Controller from SA=49
+        CAN1.sendMsgBuf(0x18FEBF0B, 1, 8, x18FEBF0BMessage); //Electronic Brake Controller from SA=11
 
-        CAN0.sendMsgBuf(0x18FEF131, 1, 8, stmp); //CCVS from SA=49
-        CAN0.sendMsgBuf(0x18E00031, 1, 8, stmp); //Cab Message 1 CM1  from SA=49
+        //CAN0.sendMsgBuf(0x18FEF131, 1, 8, x18FEF131Message); //CCVS from SA=49
+        CAN1.sendMsgBuf(0x18E00031, 1, 8, stmp); //Cab Message 1 CM1  from SA=49
         
         CAN1.sendMsgBuf(0x18FF4F3D, 1, 8, x18FF4F3DMessage); 
         CAN1.sendMsgBuf(0x18FF4E3D, 1, 8, x18FF4E3DMessage); 
@@ -220,10 +222,12 @@ if (relayState){
         CAN1.sendMsgBuf(0x18FFA155, 1, 8, x18FFA155Message); 
         CAN1.sendMsgBuf(0x18F02455, 1, 8, x18F02455Message); 
         CAN1.sendMsgBuf(0x18F0233D, 1, 8, x18F0233DMessage); 
+        CAN1.sendMsgBuf(0x18F0253D, 1, 8, x18F0233DMessage); 
+        
         CAN1.sendMsgBuf(0x18F00F52, 1, 8, x18F00F52Message); 
         CAN1.sendMsgBuf(0x18F00E51, 1, 8, x18F00E51Message); 
         
-        CAN0.sendMsgBuf(0x0CF00331, 1, 8, stmp); 
+        CAN1.sendMsgBuf(0x0CF00331, 1, 8, stmp); 
         
         
 //        CAN1.sendMsgBuf(0x1CEBFF3D, 1, 8, x1CEBFF3DMessage[x1CEBFF3DIndex]); 
@@ -231,12 +235,12 @@ if (relayState){
 //        if (x1CEBFF3DIndex=>3) x1CEBFF3DIndex=0;
       }
       
-      if(currentMillis - previousMillis20 >= 20) {
-        previousMillis20 = currentMillis; // resets the loop timer  
+      //if(currentMillis - previousMillis20 >= 20) {
+       // previousMillis20 = currentMillis; // resets the loop timer  
     
-        CAN0.sendMsgBuf(0x08FE6E0B, 1, 8, stmp);  // High Resolution Wheel Speed  message from Brake Controller
+        //CAN0.sendMsgBuf(0x08FE6E0B, 1, 8, stmp);  // High Resolution Wheel Speed  message from Brake Controller
        
-      }
+      //}
       
      if (currentMillis - previousMillis1000 >= 1000) {
        previousMillis1000 = currentMillis;
