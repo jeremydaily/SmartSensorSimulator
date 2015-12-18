@@ -1,5 +1,5 @@
 /*
-Title: Smart Sensor Simulator Firmware for the ATMega2560 Processor on an SSS Rev 10 board
+Title: Smart Sensor Simulator Firmware for the ATMega2560 Processor on an SSS daughterboard - Rev 6
 
 */
 
@@ -10,9 +10,28 @@ Title: Smart Sensor Simulator Firmware for the ATMega2560 Processor on an SSS Re
 #include <SPI.h> // CAN and Digital Pots
 #include <Mcp4261.h> // Digital Potentiometers
 #include <SSSdaughter.h> // Pin definitions and helper functions
+#include <PWM.h>
+
+MCP_CAN CAN4 = MCP_CAN(53); // 
+
+
+boolean pumpPinState = LOW;
+unsigned long pumpHalfPeriod;
+unsigned long currentMillis = 0;
+unsigned long previousMillis = 0;
 
 void setup()
 { 
+
+   
+//  int myEraser = 7;             // this is 111 in binary and is used as an eraser
+//  TCCR4B &= ~myEraser;   // this operation (AND plus NOT),  set the three bits in TCCR2B to 0
+//  byte myPrescaler = 4;         // this could be a number in [1 , 6]. In this case, 3 corresponds in binary to 011.   
+//  TCCR4B |= myPrescaler;  //this operation (OR), replaces the last three bits in TCCR2B with our new value 011
+//  
+//  TCCR2B = TCCR2B & B11111000 | B00000110;    // set timer 2 divisor to   256 for PWM frequency of   122.55 Hz
+  
+  
   sss.begin();
   //Adjust the settings below to match the particular Smart Sensor Simulator that is being programmed. These settings are interpreted by the adjustSetting(i) function in SSS.cpp
  
@@ -40,7 +59,7 @@ void setup()
 
    //The following settings are in milliVolts
   sss.settings[20] = 500; //b Daughter VoutA (J22-12): MCM120-47, Fan Speed, Tan/White 
-  sss.settings[21] = 500; //n Daughter VoutB (J22-13): ACM120-109, DEF Tank Level, Pink
+  sss.settings[21] = 2500; //n Daughter VoutB (J22-13): ACM120-109, DEF Tank Level, Pink
   sss.settings[22] = 2500; //m Daughter VoutC (J22-1): ACM120-72, DPF pressure out signal, Orange/White
   sss.settings[23] = 2500; //l Daughter VoutD (J22-2): ACM120-100, DEF Pressure signal, Purple/Black
   
@@ -52,8 +71,9 @@ void setup()
   sss.settings[27] = 0;  //PWM4 (J20-4):
   sss.settings[28] = 1;  //PWM5 (J20-5):
   sss.settings[29] = 1;  //PWM6 (J20-6):
-  sss.settings[30] = 0;  //PWM7 (J20-7):
-  sss.settings[31] = 0;  //PWM8 (J20-8):
+  sss.settings[30] = 21;  //PWM7 (J20-7): B41	GRA3511-1	Throttle Sense 2	White
+  sss.settings[31] = 40;  //PWM8 (J20-8): B45	BLU3142 	Throttle Sense 1	Pink/Black
+
   
   // For the following are switches.
   sss.settings[32] = 0; //J1939 Select (Connects CAN4 to J1939).
@@ -146,7 +166,10 @@ void setup()
   //
   //the first nibble of the CAN message tells the SSS where to put the message.  
   //Construct new CAN messages using the format below. Each CAN message needs to have all 3 lines.
- 
+  Serial.println("Setting up CAN4..."); //J1939
+  if(CAN4.begin(CAN_500KBPS) == CAN_OK) Serial.println("CAN4 init ok!!");
+  else Serial.println("CAN0 init fail!!");
+    
   String commandString = "CAN0CFF00520020FFFFFFFFFFFFFFFF"; // SCR Outlet Nox Sensor Signal
   commandString.toCharArray(sss.command,32);
   sss.processCommand(31);
@@ -160,11 +183,21 @@ void setup()
   Serial.println("Daughter Board Program for ATmega2560 Processor.");
   Serial.println("Finished Starting Up... Type a command:");
   
+  // Set the Williams Controls Accelerator Pedal output to be in idle with a 200Hz PWM signal
+  int32_t frequency = 200;
+  InitTimersSafe(); 
+  Timer4_SetFrequency(frequency);
+  Timer2_SetFrequency(frequency);
+  pwmWrite(8, 14); //Pin 8 is J20-7: PWM 7 Out on the daughterboard. The value of 14 givea about 500 mV
+  pwmWrite(9, 42); //Pin 9 is J20-8: PWM 8 Out on the daughterboard. The value of 42 gives about 1000 mV
+  
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 void loop(){
+ 
+ 
   //Check for new commands on the serial bus
   if (Serial.available()>0) 
   {

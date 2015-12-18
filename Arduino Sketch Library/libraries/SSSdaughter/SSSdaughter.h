@@ -163,7 +163,7 @@ class SSS
     byte CANchannel[100];
     byte CANmessages[50][8];
     int numCANmsgs;
-    int CANtxPeriod[100];
+    unsigned long CANtxPeriod[100];
     int periodNumber;
     
     //The following are characters to be converted into numbers. These come from serial commands.
