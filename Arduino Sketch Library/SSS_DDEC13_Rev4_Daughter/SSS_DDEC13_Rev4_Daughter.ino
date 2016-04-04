@@ -11,6 +11,11 @@ Title: Smart Sensor Simulator Firmware for the ATMega2560 Processor on an SSS Re
 #include <Mcp4261.h> // Digital Potentiometers
 #include <SSSdaughter.h> // Pin definitions and helper functions
 
+boolean pumpPinState = LOW;
+unsigned long pumpHalfPeriod;
+unsigned long currentMillis = 0;
+unsigned long previousMillis = 0;
+
 void setup()
 { 
   sss.begin();
@@ -40,7 +45,7 @@ void setup()
 
    //The following settings are in milliVolts
   sss.settings[20] = 500; //b Daughter VoutA (J22-12): MCM120-47, Fan Speed, Tan/White 
-  sss.settings[21] = 0000; //n Daughter VoutB (J22-13): ACM120-109, DEF Tank Level, Pink
+  sss.settings[21] = 2500; //n Daughter VoutB (J22-13): ACM120-109, DEF Tank Level, Pink
   sss.settings[22] = 2500; //m Daughter VoutC (J22-1): ACM120-72, DPF pressure out signal, Orange/White
   sss.settings[23] = 2500; //l Daughter VoutD (J22-2): ACM120-100, DEF Pressure signal, Purple/Black
   
@@ -165,6 +170,16 @@ void setup()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 void loop(){
+  
+  //PH4 is arduino pin 6 on the ATmega2560. This is connected to PWM5 Out, which is J20-5 on the 
+  //Rev 4 daughterboard. J20-5 is connected to ACM-95, which is the DEF Pump return signal.
+  currentMillis=millis();
+  if (currentMillis - previousMillis >=2){
+    previousMillis = currentMillis;
+    pumpPinState = !pumpPinState;
+    digitalWrite(PWM5Pin,pumpPinState);
+  }
+
   //Check for new commands on the serial bus
   if (Serial.available()>0) 
   {

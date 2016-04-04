@@ -115,10 +115,10 @@ void setup()
   sss.settings[78] = 0; //CAN2 pn 9 pin connector
   
   // For the following switches 1 = pull high to +12V through 10 ohms and 0 = Pulled Down.
-  sss.settings[79] = 1; //Coil 1 (J16-16): MCM120-37, Variable Speed Water Pump, Tan/Black 
-  sss.settings[80] = 1; //Coil 2 (J16-15): MCM120-35, Turbocharger control, Purple/Blue
-  sss.settings[81] = 1; //Coil 3 (J16-14): MCM120-33, Two-speed Fan or Variable-speed Fan, Tan
-  sss.settings[82] = 1; //Coil 4 (J24-24): MCM120-61, EGR Valve, Pink/Blue
+  sss.settings[79] = 0; //Coil 1 (J16-16): MCM120-37, Variable Speed Water Pump, Tan/Black 
+  sss.settings[80] = 0; //Coil 2 (J16-15): MCM120-35, Turbocharger control, Purple/Blue
+  sss.settings[81] = 0; //Coil 3 (J16-14): MCM120-33, Two-speed Fan or Variable-speed Fan, Tan
+  sss.settings[82] = 0; //Coil 4 (J24-24): MCM120-61, EGR Valve, Pink/Blue
   
   
   //Sample Commands:

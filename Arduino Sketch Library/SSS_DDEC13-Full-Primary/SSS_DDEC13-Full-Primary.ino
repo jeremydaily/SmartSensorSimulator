@@ -223,21 +223,21 @@ void loop()
   if(currentMillis - previousMillis1000 >= 1000) {
     previousMillis1000 = currentMillis; // resets the loop timer  
     previousMillis1000delayed = currentMillis+5; // resets the loop timer  
-    CAN0.sendMsgBuf(0x10ECFF01, 1, 8, sessionControlMessage); //MCM DM1
+  //  CAN0.sendMsgBuf(0x10ECFF01, 1, 8, sessionControlMessage); //MCM DM1
     
     //CAN0.sendMsgBuf(0x10FECA03, 1, 8, feca03Data); //TCM DM1
     CAN0.sendMsgBuf(0x18FEF803, 1, 8, fef803Data); // Transmission Oil Temperature
     //CAN0.sendMsgBuf(0x18FF8003, 1, 8, ff8003Data);
     //CAN0.sendMsgBuf(0x18FF0503, 1, 8, ff0503Data);
     
-    CAN0.sendMsgBuf(0x10ECFF3D, 1, 8, sessionControlMessage); //ACM DM1
+  //  CAN0.sendMsgBuf(0x10ECFF3D, 1, 8, sessionControlMessage); //ACM DM1
     
   }
 
-  if(currentMillis - previousMillis1000delayed >= 1000) {
-   CAN0.sendMsgBuf(0x10EBFF01, 1, 8, sessionTransportMessage); //MCM DM1
-   CAN0.sendMsgBuf(0x10EBFF3D, 1, 8, sessionTransportMessage); //ACM DM1
-  } 
+//  if(currentMillis - previousMillis1000delayed >= 1000) {
+//   CAN0.sendMsgBuf(0x10EBFF01, 1, 8, sessionTransportMessage); //MCM DM1
+//   CAN0.sendMsgBuf(0x10EBFF3D, 1, 8, sessionTransportMessage); //ACM DM1
+//  } 
     
   if(currentMillis - previousMillis100 >= 100) {
     previousMillis100 = currentMillis;     
@@ -306,7 +306,7 @@ void loop()
     
   if(currentMillis - previousMillis10 >= 10) {
     previousMillis10 = currentMillis;     
-    CAN0.sendMsgBuf(0x08FF0001, 1, 8, blankCANdata); //MCM ID
+ //   CAN0.sendMsgBuf(0x08FF0001, 1, 8, blankCANdata); //MCM ID
     
     //TCM System ID Message ID 
     ff0003Data[6]=ff0003sixthByte[index_ff0003];

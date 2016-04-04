@@ -44,9 +44,9 @@ void setup()
   sss.settings[1] = 15;  //w U1-P1W (J16-10): MCM120-109, Differential pressure EGR Yellow/White
   sss.settings[2] = 20;  //e U1-P2W (J16-11): MCM120-110, Engine Coolant Outlet Temperature, Grey/Black, Fault 110
   sss.settings[3] = 10;  //r U1-P3W (J16-13): MCM120-57, Water level for fuel water separator, Grey
-  sss.settings[4] = 3;  //t U2-P0W (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
+  sss.settings[4] = 20;  //t U2-P0W (J18-2): CPC1-4, Accelerator Pedal Position, Tan/Black, 
   sss.settings[5] = 55;  //y U2-P1W (J18-3): CPC3-5, Multifunction, Grey/White, Open 
-  sss.settings[6] = 20;   //u U2-P2W (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
+  sss.settings[6] = 10;   //u U2-P2W (J18-6): CPC4-14, Throttle Position Sensor 2, Purple/White
   sss.settings[7] = 50;  //i U2-P3W (J18-7): CPC1-1, Multifunction, Brown, Open circuit
   sss.settings[8] = 50;  //a U3-P0W (J10-4): CPC4-15, Multiple application, Tan/White
   sss.settings[9] = 20;  //s U3-P1W (J10-9): CPC3-15, Ambient Air Temperature Sensor, Pink/White
@@ -310,15 +310,15 @@ void loop(){
       //else outByte[4] = -outByte[1] + 188;
 
 //      Serial1.write(outByte[0]);
-      serialSend0Micros = currentMicros+600;
+      serialSend0Micros = currentMicros+500;
       LIN0send = true;
-      serialSend1Micros = currentMicros+1200;
+      serialSend1Micros = currentMicros+1000;
       LIN1send = true;
-      serialSend2Micros = currentMicros+1800;
+      serialSend2Micros = currentMicros+1500;
       LIN2send = true;
-      serialSend3Micros = currentMicros+2400;
+      serialSend3Micros = currentMicros+2000;
       LIN3send = true;
-      serialSend4Micros = currentMicros+3000;
+      serialSend4Micros = currentMicros+2500;
       LIN4send = true;
       
 //      Serial.print("Sent ");
