@@ -55,7 +55,7 @@ void loop() {
     }
     Serial.println();
 
-         if (rxmsg.id == 0x18FEF100) ID18FEF100millis = 0;
+        if (rxmsg.id == 0x18FEF100) ID18FEF100millis = 0;
    else if (rxmsg.id == 0x18FEF121) ID18FEF121millis = 0;
   }
 
