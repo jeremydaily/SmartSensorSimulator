@@ -1,3 +1,17 @@
+#Setup for Programming on Windows 10
+1. Download Arduino 1.6.8 from https://www.arduino.cc/en/Main/OldSoftwareReleases
+2. Download this repository with the libraries.
+3. Open Arduino and install the SSS specific libraries. 
+  1. From the menu select Sketch -> Include Library -> Add .zip Library...
+  2. Navigate to the folder for the library of interest. For example: Documents\GitHub\SmartSensorSimulator\Arduino Sketch Library\libraries\ You will need the following libraries:
+     1. SSS
+     2. SSSdaughter
+     3. SSSdaughter6
+     4. MCP2515
+     5. MCP4728
+     6. MCP4261
+
+
 #Setting up the Synercon SSS toolchain on Windows 7
 1. Download and install the Arduino IDE (1.0.6)
 http://arduino.cc/download.php?f=/arduino-1.0.6-windows.exe
