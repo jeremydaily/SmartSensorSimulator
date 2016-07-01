@@ -1,0 +1,74 @@
+{
+  "packages": [
+    {
+      "name": "Smart Sensor Simulator",
+      "maintainer": "Jeremy Daily",
+      "websiteURL": "https://github.com/SynerconTechnologies/SmartSensorSimulator",
+      "email": "jeremy@synercontechnologies.com",
+      "help": {
+        "online": "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
+      },
+      "platforms": [
+        {
+          "name": "SSS mega",
+          "architecture": "avr",
+          "version": "1.0",
+          "category": "Contributed",
+          "help": {
+            "online": "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
+          },
+          "url": "https://github.com/SynerconTechnologies/SmartSensorSimulator/raw/master/Arduino%20Tools/synercon.zip",
+          "archiveFileName": "synercon.zip",
+          "checksum": "SHA-256:0c43803ddf2a1567ce7d3d8067c1417f1e8733c9a175ce3b094c701195524718",
+          "size": "293848",
+          "boards": [
+            {"name": "SSS mega"},
+            {"name": "SSS primary"}
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "arduino",
+              "name": "avr-gcc",
+              "version": "4.8.1-arduino5"
+            },
+            {
+              "packager": "arduino",
+              "name": "avrdude",
+              "version": "6.0.1-arduino5"
+            }
+          ]
+        },
+        {
+          "name": "SSS primary",
+          "architecture": "avr",
+          "version": "1.0",
+          "category": "Contributed",
+          "help": {
+            "online": "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
+          },
+          "url": "https://github.com/SynerconTechnologies/SmartSensorSimulator/raw/master/Arduino%20Tools/synercon.zip",
+          "archiveFileName": "synercon.zip",
+          "checksum": "SHA-256:0c43803ddf2a1567ce7d3d8067c1417f1e8733c9a175ce3b094c701195524718",
+          "size": "293848",
+          "boards": [
+            {"name": "SSS mega"},
+            {"name": "SSS primary"}
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "arduino",
+              "name": "avr-gcc",
+              "version": "4.8.1-arduino5"
+            },
+            {
+              "packager": "arduino",
+              "name": "avrdude",
+              "version": "6.0.1-arduino5"
+            }
+          ]
+        }
+      ],
+      "tools":[]
+    }
+  ]
+}
