@@ -11,6 +11,7 @@
      5. MCP4728
      6. MCP4261
 
+The 0.1uF capacitor C5 is missing on the Rev 10 boards so the primary atmega processor does not get reset on the DTR signal. This prevents the SSS from cycling the key switch when the USB cable is plugged in. However, it also prevents programming of the ATmega328 processor bu way of the serial. As such, the ISP headers are used for programming the smaller processor. An Arduino as ISP is the preferred method for the latest versions of windows since the AVRISP mkII is no longer sold by ATMEL. 
 
 #Setting up the Synercon SSS toolchain on Windows 7
 1. Download and install the Arduino IDE (1.0.6)
