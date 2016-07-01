@@ -1,0 +1,46 @@
+{
+	"packages" : [{
+			"name" : "synercon",
+			"maintainer" : "Synercon Technologies",
+			"websiteURL" : "http://www.synercontechnologies.com",
+			"email" : "support@synercontechnologies.com",
+			"help" : {
+				"online" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
+			},
+			"platforms" : [{
+					"name" : "Smart Sensor Simulator",
+					"architecture" : "avr",
+					"version" : "1.0.0",
+					"category" : "Contributed",
+					"help" : {
+						"online" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
+					},
+					"url" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/blob/Arduino-1.6.8-Support/Arduino%20Tools/synercon-1.0.0.zip?raw=true",
+					"archiveFileName" : "synercon-1.0.0.zip",
+					"checksum" : "SHA-256:3500716ee3dc863bb3c62df48b0efe67dc1b4e1ac5e60d51f772d9437e9431d8",
+					"size" : "293848",
+					"boards" : [{
+							"name" : "SSS mega"
+						}, {
+							"name" : "SSS primary"
+						}
+
+					],
+					"toolsDependencies" : [{
+							"packager" : "arduino",
+							"name" : "avr-gcc",
+							"version" : "4.8.1-arduino5"
+						}, {
+							"packager" : "arduino",
+							"name" : "avrdude",
+							"version" : "6.0.1-arduino5"
+						}
+					]
+				}
+			],
+
+			"tools" : []
+
+		}
+	]
+}
