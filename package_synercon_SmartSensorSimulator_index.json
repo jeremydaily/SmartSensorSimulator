@@ -1,46 +1,46 @@
 {
-  "packages": [
-    {
-      "name": "synercon",
-      "maintainer": "Synercon Technologies",
-      "websiteURL": "https://www.synercontechnologies.com",
-      "email": "support@synercontechnologies.com",
-      "help": {
-        "online": "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
-      },
-      "platforms": [
-        {
-          "name": "Smart Sensor Simulator",
-          "architecture": "avr",
-          "version": "1.0",
-          "category": "Contributed",
-          "help": {
-            "online": "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
-          },
-          "url": "https://github.com/SynerconTechnologies/SmartSensorSimulator/raw/master/Arduino%20Tools/synercon.zip",
-          "archiveFileName": "synercon.zip",
-          "checksum": "SHA-256:0c43803ddf2a1567ce7d3d8067c1417f1e8733c9a175ce3b094c701195524718",
-          "size": "293848",
-          "boards": [
-            {"name": "SSS mega"},
-            {"name": "SSS primary"}
-            
-          ],
-          "toolsDependencies": [
-            {
-              "packager": "arduino",
-              "name": "avr-gcc",
-              "version": "4.8.1-arduino5"
-            },
-            {
-              "packager": "arduino",
-              "name": "avrdude",
-              "version": "6.0.1-arduino5"
-            }
-          ]
-        },
-      ]
-      "tools":[]
-    }
-  ]
+	"packages" : [{
+			"name" : "synercon",
+			"maintainer" : "Synercon Technologies",
+			"websiteURL" : "https://www.synercontechnologies.com",
+			"email" : "support@synercontechnologies.com",
+			"help" : {
+				"online" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
+			},
+			"platforms" : [{
+					"name" : "Smart Sensor Simulator",
+					"architecture" : "avr",
+					"version" : "1.0",
+					"category" : "Contributed",
+					"help" : {
+						"online" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
+					},
+					"url" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/raw/master/Arduino%20Tools/synercon.zip",
+					"archiveFileName" : "synercon.zip",
+					"checksum" : "SHA-256:0c43803ddf2a1567ce7d3d8067c1417f1e8733c9a175ce3b094c701195524718",
+					"size" : "293848",
+					"boards" : [{
+							"name" : "SSS mega"
+						}, {
+							"name" : "SSS primary"
+						}
+
+					],
+					"toolsDependencies" : [{
+							"packager" : "arduino",
+							"name" : "avr-gcc",
+							"version" : "4.8.1-arduino5"
+						}, {
+							"packager" : "arduino",
+							"name" : "avrdude",
+							"version" : "6.0.1-arduino5"
+						}
+					]
+				}
+			],
+
+			"tools" : []
+
+		}
+	]
 }
