@@ -15,7 +15,7 @@
 					"help" : {
 						"online" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/wiki"
 					},
-					"url" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/raw/master/Arduino%20Tools/synercon-1.0.0.zip",
+					"url" : "https://github.com/SynerconTechnologies/SmartSensorSimulator/blob/Arduino-1.6.8-Support/Arduino%20Tools/synercon-1.0.0.zip?raw=true",
 					"archiveFileName" : "synercon.zip",
 					"checksum" : "SHA-256:0c43803ddf2a1567ce7d3d8067c1417f1e8733c9a175ce3b094c701195524718",
 					"size" : "293848",
