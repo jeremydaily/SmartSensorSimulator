@@ -511,15 +511,15 @@ void SSS::sendComponentInfo(char id[29])
        byte transport2[8] = {2,id[7],id[8],id[9],id[10],id[11],id[12],id[13]};
        byte transport3[8] = {3,id[14],id[15],id[16],id[17],id[18],id[19],id[20]};
        byte transport4[8] = {4,id[21],id[22],id[23],id[24],id[25],id[26],id[27]};
-       CAN1.sendMsgBuf(0x1CECFF0B, 1, 8, transport0);
+       CAN1.sendMsgBuf(0x1CECFFFE, 1, 8, transport0);
        delay(3);
-       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport1);
+       CAN1.sendMsgBuf(0x1CEBFFFE, 1, 8, transport1);
        delay(3);
-       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport2);
+       CAN1.sendMsgBuf(0x1CEBFFFE, 1, 8, transport2);
        delay(2);
-       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport3);
+       CAN1.sendMsgBuf(0x1CEBFFFE, 1, 8, transport3);
        delay(2);
-       CAN1.sendMsgBuf(0x1CEBFF0B, 1, 8, transport4);
+       CAN1.sendMsgBuf(0x1CEBFFFE, 1, 8, transport4);
        
 }
 void SSS::printHelp(){
