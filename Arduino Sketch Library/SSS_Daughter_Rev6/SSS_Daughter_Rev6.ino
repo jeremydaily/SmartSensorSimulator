@@ -17,14 +17,14 @@ void setup()
   //Adjust the settings below to match the particular Smart Sensor Simulator that is being programmed. These settings are interpreted by the adjustSetting(i) function in SSS.cpp
  
   //setting[??] = value //Schematic Port Name (PCB Pin Number): Connector Pin Number, Wire Application, Wire Color, SPN  
-  sss.settings[0] = 26;  //q U1-P0W (J20-13): Not Used (MCM120-43, White/Blue)
-  sss.settings[1] = 20;  //w U1-P1W (J20-14): MCM120-108, Engine Oil Temperature, Green/White, SPN 175, 20 = 76deg f
-  sss.settings[2] = 15;  //e U1-P2W (J20-15): MCM120-90, Intake Air Throttle Circuit, Brown/White, SPN 51
-  sss.settings[3] = 10;  //r U1-P3W (J20-16): MCM120-113, Low Side Fuel Pressure (LPPO), Black/Blue, 
-  sss.settings[4] = 50;  //t U2-P0W (J20-17): ACM120-84, DEF Pressure Sensor, Brown Blue 
-  sss.settings[5] = 55;  //y U2-P1W (J20-18): MCM120-86, Turbo Inlet Temperature, Grey/Blue,
-  sss.settings[6] = 1;   //u U2-P2W (J20-19): MCM120-77, Fuel Temperature, Grey/White, SPN 174^u
-  sss.settings[7] = 20;  //i U2-P3W (J20-20): ACM120-103, DEF Tank Temperature, Orange Black
+  sss.settings[0] = 26;  //q U1-P0W (J20-13): 
+  sss.settings[1] = 20;  //w U1-P1W (J20-14): 
+  sss.settings[2] = 15;  //e U1-P2W (J20-15): 
+  sss.settings[3] = 10;  //r U1-P3W (J20-16): 
+  sss.settings[4] = 50;  //t U2-P0W (J20-17): 
+  sss.settings[5] = 55;  //y U2-P1W (J20-18): 
+  sss.settings[6] = 1;   //u U2-P2W (J20-19): 
+  sss.settings[7] = 20;  //i U2-P3W (J20-20): 
   sss.settings[8] = 1;   //a U3-P0W (J22-15): ACM120-27, DOC Outlet Temperature, Purple/White, SPN 3250 
   sss.settings[9] = 30;  //s U3-P1W (J22-16): ACM120-85, DEF Metering Unit temperature, Pink/Black 
   sss.settings[10] = 1;  //d U3-P2W (J22-17): ACM120-97, DPF Outlet Temperature, Purple, SPN 3246 
